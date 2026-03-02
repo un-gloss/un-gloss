@@ -1,6 +1,7 @@
 import Link from "next/link";
 import ThemeToggle from "@/components/ThemeToggle"; // Optional but keeps UX consistent
 import { Metadata } from 'next';
+import { getSortedPostsData } from "@/lib/blog";
 
 export const metadata: Metadata = {
     title: 'The Hall of Shame Blog | Un-gloss Corporate Culture',
@@ -8,30 +9,8 @@ export const metadata: Metadata = {
 };
 
 export default function BlogIndex() {
-    // Mocked CMS Data representing "Long-tail Keywords"
-    const posts = [
-        {
-            slug: "top-10-confusing-corporate-phrases-2026",
-            title: "Top 10 confusing corporate phrases of 2026 (And what they actually mean)",
-            date: "March 1st, 2026",
-            excerpt: "From 'boiling the ocean' to 'synergizing cross-functional alignments,' we break down the worst offenders of the year so you don't have to Google them in a panic.",
-            category: "Word Economy"
-        },
-        {
-            slug: "how-to-handle-passive-aggressive-emails",
-            title: "How to handle passive-aggressive emails: A survival guide",
-            date: "February 25th, 2026",
-            excerpt: "When Susan says 'As per my last email,' she isn't being helpful. Learn how to decode and defuse hostile workplace communications.",
-            category: "Office Humor"
-        },
-        {
-            slug: "the-real-cost-of-meaningless-meetings",
-            title: "The real cost of meaningless meetings (Calculated in dollars)",
-            date: "February 10th, 2026",
-            excerpt: "We ran the numbers. Turns out, gathering 10 people for an hour to 'touch base' is burning a lot more than just bandwidth. It's burning cash.",
-            category: "Corporate Chaos"
-        }
-    ];
+    // Dynamically fetch from the CMS
+    const posts = getSortedPostsData();
 
     return (
         <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", padding: "40px 24px" }}>
