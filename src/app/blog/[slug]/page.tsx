@@ -4,11 +4,12 @@ import { getPostData, getAllPostSlugs } from '@/lib/blog';
 import { notFound } from 'next/navigation';
 
 type Props = {
-    params: { slug: string };
+    params: Promise<{ slug: string }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-    const postData = await getPostData(params.slug);
+    const { slug } = await params;
+    const postData = await getPostData(slug);
     
     // Fallback if not found
     const title = postData ? `${postData.title} - Un-gloss Blog` : 'Post Not Found';
@@ -19,7 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         description: 'Read the latest chaotic workplace survival tips from The Hall of Shame.',
         openGraph: {
             title: title,
-            url: `https://www.un-gloss.com/blog/${params.slug}`,
+            url: `https://www.un-gloss.com/blog/${slug}`,
             type: 'article',
             images: ['https://www.un-gloss.com/og-default.jpg'],
         }
@@ -31,7 +32,8 @@ export async function generateStaticParams() {
 }
 
 export default async function BlogPostPage({ params }: Props) {
-    const postData = await getPostData(params.slug);
+    const { slug } = await params;
+    const postData = await getPostData(slug);
 
     if (!postData) {
         notFound();
@@ -51,7 +53,7 @@ export default async function BlogPostPage({ params }: Props) {
                 "url": "https://www.un-gloss.com/logo.png"
             }
         },
-        "url": `https://www.un-gloss.com/blog/${params.slug}`,
+        "url": `https://www.un-gloss.com/blog/${slug}`,
         "datePublished": new Date(postData.date).toISOString(),
         "dateModified": new Date(postData.date).toISOString(),
         "author": {
