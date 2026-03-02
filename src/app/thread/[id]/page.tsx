@@ -96,36 +96,8 @@ export default function ThreadPage() {
     if (!translation) return <div style={{ display: "flex", justifyContent: "center", padding: "100px", color: "var(--signal-white)" }}>Data not found.</div>;
 
     return (
-        <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-            {/* Thread Header */}
-            <header className="glass-panel" style={{
-                position: "sticky", top: 0, zIndex: 50, borderRadius: 0, borderTop: "none", borderLeft: "none", borderRight: "none",
-                display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 24px"
-            }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-                    <button
-                        onClick={() => router.back()}
-                        style={{
-                            background: "transparent", border: "1px solid var(--glass-border)", borderRadius: "50%",
-                            width: "36px", height: "36px", display: "flex", alignItems: "center", justifyContent: "center",
-                            color: "var(--signal-white)", cursor: "pointer", transition: "all 0.2s ease"
-                        }}
-                        onMouseOver={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.1)"}
-                        onMouseOut={(e) => e.currentTarget.style.background = "transparent"}
-                    >
-                        <FaArrowLeft size={16} />
-                    </button>
-                    <Link href="/" style={{ textDecoration: "none" }}>
-                        <div style={{ fontSize: "1.25rem", fontWeight: "bold", letterSpacing: "-0.05em", color: "var(--text-muted)", display: "flex", alignItems: "center" }}>
-                            <span style={{ color: "var(--electric-blue)", marginRight: "4px" }}>U/</span>
-                            <span style={{ color: "var(--signal-white)" }}>Un</span>gloss
-                        </div>
-                    </Link>
-                </div>
-                <ThemeToggle />
-            </header>
-
-            <main style={{ flex: 1, padding: "24px", display: "flex", justifyContent: "center" }}>
+        <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", padding: "40px 24px" }}>
+            <main style={{ maxWidth: "800px", margin: "0 auto", width: "100%", flex: 1 }}>
                 <div style={{ width: "100%", maxWidth: "800px", display: "flex", flexDirection: "column", gap: "24px" }}>
                     
                     {/* The Original Translation Post */}

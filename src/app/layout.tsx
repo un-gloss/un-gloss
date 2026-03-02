@@ -5,7 +5,6 @@ import '@fontsource/merriweather/400.css';
 import '@fontsource/merriweather/700.css';
 import '@fontsource/roboto-mono/400.css';
 import "./globals.css";
-import ThemeToggle from "@/components/ThemeToggle";
 import { GoogleAnalytics } from '@next/third-parties/google';
 import { AuthProvider } from "@/context/AuthContext";
 import { SpeedInsights } from '@vercel/speed-insights/next';
@@ -28,17 +27,16 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <div className="container">
-          <header className="header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <a href="/" className="logo">
+          <header className="header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 24px", borderBottom: "1px solid var(--glass-border)" }}>
+            <Link href="/" className="logo" style={{ textDecoration: "none" }}>
               <span className="logo-mark">U/</span>
               Un<span>gloss</span>
-            </a>
-            <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-              <Link href="/blog" style={{ color: "var(--text-muted)", textDecoration: "none", fontSize: "0.9rem", fontWeight: "bold" }}>
-                  Blog
-              </Link>
-              <ThemeToggle />
-            </div>
+            </Link>
+            <nav style={{ display: "flex", gap: "24px", alignItems: "center", fontSize: "0.9rem", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+              <Link href="/" className="nav-link">Home</Link>
+              <Link href="/blog" className="nav-link">Blog</Link>
+              <Link href="/preferences" className="nav-link">Preferences</Link>
+            </nav>
           </header>
           <AuthProvider>
             {children}

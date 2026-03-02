@@ -96,17 +96,7 @@ export default function TermDefinitionPage({ params }: Props) {
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
 
-            <main style={{ maxWidth: "800px", margin: "0 auto", width: "100%" }}>
-                {/* Header Section */}
-                <div style={{ paddingBottom: "32px", borderBottom: "1px solid var(--glass-border)", marginBottom: "40px" }}>
-                    <span style={{ fontSize: "0.85rem", color: "var(--electric-blue)", textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: "bold" }}>
-                        Corporate Jargon Dictionary
-                    </span>
-                    <h1 style={{ fontSize: "3.5rem", fontWeight: "bold", margin: "16px 0", color: "var(--signal-white)" }}>
-                        {termData.term}
-                    </h1>
-                </div>
-
+            <main style={{ flex: 1, maxWidth: "800px", margin: "0 auto", width: "100%" }}>
                 {/* The Template: Definitions */}
                 <div style={{ display: "flex", flexDirection: "column", gap: "32px", marginBottom: "48px" }}>
                     

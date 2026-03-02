@@ -62,7 +62,7 @@ export default async function BlogPostPage({ params }: Props) {
     };
 
     return (
-         <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", padding: "100px 24px" }}>
+        <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", padding: "40px 24px" }}>
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
