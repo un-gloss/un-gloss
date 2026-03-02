@@ -41,6 +41,11 @@ export default function RootLayout({
           <AuthProvider>
             {children}
           </AuthProvider>
+          <footer style={{ borderTop: "1px solid var(--glass-border)", padding: "32px 24px", marginTop: "40px", textAlign: "center", fontSize: "0.85rem", color: "var(--text-muted)", display: "flex", justifyContent: "center", gap: "32px", textTransform: "uppercase", letterSpacing: "0.05em", flexWrap: "wrap" }}>
+            <Link href="/about" className="nav-link">About Us</Link>
+            <Link href="/privacy" className="nav-link">Privacy Policy</Link>
+            <Link href="/terms" className="nav-link">Terms of Service</Link>
+          </footer>
         </div>
         {process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID && (
           <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID} />

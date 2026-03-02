@@ -1,7 +1,6 @@
 "use client";
 
 import ThemeToggle from "@/components/ThemeToggle";
-import { FaGoogle, FaEnvelope, FaUserCircle } from "react-icons/fa";
 
 export default function PreferencesPage() {
     return (
@@ -35,30 +34,7 @@ export default function PreferencesPage() {
                     </div>
                 </div>
 
-                {/* Account Settings (Mocked for now) */}
-                <div className="glass-panel" style={{ padding: "32px", display: "flex", flexDirection: "column", gap: "24px", border: "1px solid var(--glass-border)" }}>
-                     <div style={{ borderBottom: "1px solid var(--glass-border)", paddingBottom: "16px" }}>
-                        <h2 style={{ fontSize: "1.2rem", fontWeight: "bold", color: "var(--electric-blue)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Account Integration</h2>
-                    </div>
-
-                    <div style={{ display: "flex", alignItems: "center", gap: "16px", background: "rgba(255,255,255,0.02)", padding: "16px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.05)" }}>
-                       <FaUserCircle size={48} color="var(--text-muted)" />
-                       <div style={{ flex: 1 }}>
-                           <h3 style={{ fontSize: "1rem", color: "var(--signal-white)", margin: 0 }}>Not Logged In</h3>
-                           <p style={{ color: "var(--text-muted)", fontSize: "0.85rem", margin: "4px 0 0 0" }}>Sign in to save your Hall of Shame translations and claim a permanent alias.</p>
-                       </div>
-                    </div>
-
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginTop: "8px" }}>
-                        <button className="action-button btn-ungloss" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "12px", padding: "12px", fontSize: "0.95rem" }} onClick={() => alert("Authentication is temporarily mocked in Phase 2.")}>
-                            <FaGoogle size={18} /> Sign In with Google
-                        </button>
-                        <button className="action-button" style={{ background: "transparent", border: "1px solid var(--glass-border)", color: "var(--signal-white)", display: "flex", alignItems: "center", justifyContent: "center", gap: "12px", padding: "12px", fontSize: "0.95rem" }} onClick={() => alert("Authentication is temporarily mocked in Phase 2.")}>
-                            <FaEnvelope size={18} /> Continue with Email
-                        </button>
-                    </div>
-
-                </div>
+                {/* Account Settings (Removed in Phase 12) */}
 
             </div>
         </div>

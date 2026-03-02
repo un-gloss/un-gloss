@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { collection, query, limit, onSnapshot, orderBy } from "firebase/firestore";
+import { collection, query, onSnapshot, orderBy } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
 interface Stats {
@@ -28,8 +28,7 @@ export default function StatsBar() {
     useEffect(() => {
         const q = query(
             collection(db, "translations"),
-            orderBy("timestamp", "asc"), // Get oldest first so we can just reduce them
-            limit(1000)
+            orderBy("timestamp", "asc") // Get all to aggregate live
         );
         const unsubscribe = onSnapshot(q, (snapshot) => {
             let u = BASE_STATS.unglosses;

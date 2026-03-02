@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { FaHistory, FaBookmark } from "react-icons/fa";
+import { useEffect, useState, FormEvent } from "react";
+import { FaHistory, FaEnvelope } from "react-icons/fa";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 interface HistoryItem {
     id: string;
@@ -99,16 +101,57 @@ export default function HistorySidebar() {
 
             <div className="glass-panel" style={{
                 marginTop: "auto",
-                padding: "16px",
-                textAlign: "center",
+                padding: "20px",
+                textAlign: "left",
                 border: "1px solid var(--glass-border)",
                 background: "rgba(0, 123, 255, 0.05)"
             }}>
-                <FaBookmark style={{ color: "var(--electric-blue)", marginBottom: "8px" }} />
-                <p style={{ fontSize: "0.8rem", color: "var(--signal-white)", fontWeight: "bold" }}>PRO TIP</p>
-                <p style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginTop: "4px" }}>
-                    Login to sync your archive across devices.
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
+                    <FaEnvelope style={{ color: "var(--electric-blue)" }} />
+                    <h3 style={{ fontSize: "0.85rem", color: "var(--signal-white)", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.05em", margin: 0 }}>
+                        Jargon Buster Newsletter
+                    </h3>
+                </div>
+                <p style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginBottom: "16px", lineHeight: "1.4" }}>
+                    Get our weekly dispatch. We dissect the newest corporate slang so you don't have to. No spam, just clarity.
                 </p>
+                <form 
+                    onSubmit={async (e: FormEvent<HTMLFormElement>) => {
+                        e.preventDefault();
+                        const form = e.currentTarget;
+                        const input = form.elements.namedItem("email") as HTMLInputElement;
+                        if (!input.value) return;
+                        try {
+                            await addDoc(collection(db, "newsletter_subs"), {
+                                email: input.value,
+                                source: "sidebar_widget",
+                                timestamp: serverTimestamp()
+                            });
+                            input.value = "";
+                            alert("Subscribed successfully!");
+                        } catch (err) {
+                            console.error(err);
+                            alert("Failed to subscribe.");
+                        }
+                    }} 
+                    style={{ display: "flex", flexDirection: "column", gap: "8px" }}
+                >
+                    <input 
+                        type="email" 
+                        name="email"
+                        placeholder="your@email.com" 
+                        required
+                        className="glass-input"
+                        style={{ padding: "8px 12px", fontSize: "0.8rem", width: "100%", boxSizing: "border-box" }}
+                    />
+                    <button 
+                        type="submit" 
+                        className="action-button btn-secondary"
+                        style={{ padding: "8px", fontSize: "0.8rem", width: "100%", borderColor: "var(--electric-blue)" }}
+                    >
+                        SUBSCRIBE
+                    </button>
+                </form>
             </div>
         </div>
     );
