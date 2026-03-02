@@ -62,26 +62,25 @@ export default function BlogIndex() {
                     </h1>
                 </div>
 
+                <style dangerouslySetInnerHTML={{
+                    __html: `
+                    .blog-card-hover {
+                        border: 1px solid rgba(255,255,255,0.05) !important;
+                        transition: all 0.2s ease;
+                        cursor: pointer;
+                    }
+                    .blog-card-hover:hover {
+                        border-color: var(--electric-blue) !important;
+                        transform: translateY(-2px);
+                        box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+                    }
+                    `
+                }} />
+                
                 <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
                     {posts.map(post => (
                         <Link key={post.slug} href={`/blog/${post.slug}`} style={{ textDecoration: "none" }}>
-                            <div className="glass-panel" style={{ 
-                                padding: "32px", 
-                                border: "1px solid rgba(255,255,255,0.05)", 
-                                transition: "all 0.2s ease",
-                                cursor: "pointer"
-                            }}
-                                onMouseOver={(e) => {
-                                    e.currentTarget.style.borderColor = "var(--electric-blue)";
-                                    e.currentTarget.style.transform = "translateY(-2px)";
-                                    e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,0.5)";
-                                }}
-                                onMouseOut={(e) => {
-                                    e.currentTarget.style.borderColor = "rgba(255,255,255,0.05)";
-                                    e.currentTarget.style.transform = "none";
-                                    e.currentTarget.style.boxShadow = "none";
-                                }}
-                            >
+                            <div className="glass-panel blog-card-hover" style={{ padding: "32px" }}>
                                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "12px", alignItems: "center" }}>
                                      <span style={{ fontSize: "0.75rem", color: "var(--electric-blue)", textTransform: "uppercase", fontWeight: "bold", background: "rgba(0,123,255,0.1)", padding: "4px 8px", borderRadius: "12px" }}>
                                         {post.category}

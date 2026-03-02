@@ -153,7 +153,6 @@ export default function CommunityFeed() {
                     background: rgba(255,255,255,0.05);
                 }
             `}} />
-            </div>
 
             {/* AdSense Placeholder */}
             <div className="glass-panel" style={{
