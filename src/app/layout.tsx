@@ -8,6 +8,8 @@ import "./globals.css";
 import ThemeToggle from "@/components/ThemeToggle";
 import { GoogleAnalytics } from '@next/third-parties/google';
 import { AuthProvider } from "@/context/AuthContext";
+import { SpeedInsights } from '@vercel/speed-insights/next';
+import { Analytics } from '@vercel/analytics/react';
 
 
 
@@ -41,6 +43,8 @@ export default function RootLayout({
         {process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID && (
           <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID} />
         )}
+        <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   );
