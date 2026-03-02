@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { collection, query, orderBy, limit, onSnapshot } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { useRouter } from "next/navigation";
+import { FaHeart, FaCommentAlt, FaShare } from "react-icons/fa";
 
 // Temporary mock data until Firebase is fully connected by the user
 const MOCK_FEED = [
@@ -32,6 +34,7 @@ const MOCK_FEED = [
 export default function CommunityFeed() {
     const [feed, setFeed] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const router = useRouter();
 
     useEffect(() => {
         const q = query(
@@ -79,11 +82,21 @@ export default function CommunityFeed() {
                 maxHeight: "800px" // Temporary max height, ideally handled by parent grid
             }}>
                 {feed.map((item) => (
-                    <div key={item.id} className="glass-panel" style={{ padding: "16px", display: "flex", flexDirection: "column", gap: "12px", border: "1px solid var(--glass-border)" }}>
-
+                    <div 
+                        key={item.id} 
+                        className="glass-panel" 
+                        onClick={() => router.push(`/thread/${item.id}`)}
+                        style={{ 
+                            padding: "16px", display: "flex", flexDirection: "column", gap: "12px", 
+                            border: `1px solid ${item.mode === 'hallucinate' ? 'rgba(255, 87, 34, 0.3)' : 'var(--glass-border)'}`,
+                            cursor: "pointer", transition: "all 0.2s ease" 
+                        }}
+                        onMouseOver={(e) => e.currentTarget.style.borderColor = item.mode === 'hallucinate' ? 'var(--warning-orange)' : 'var(--electric-blue)'}
+                        onMouseOut={(e) => e.currentTarget.style.borderColor = item.mode === 'hallucinate' ? 'rgba(255, 87, 34, 0.3)' : 'var(--glass-border)'}
+                    >
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                            <span style={{ fontSize: "0.75rem", color: "var(--warning-orange)", textTransform: "uppercase", fontWeight: "bold", letterSpacing: "0.05em" }}>
-                                B.S. Score: {item.bsScore !== undefined ? `${item.bsScore}%` : 'N/A'}
+                            <span style={{ fontSize: "0.75rem", color: item.mode === 'hallucinate' ? "var(--warning-orange)" : "var(--electric-blue)", textTransform: "uppercase", fontWeight: "bold", letterSpacing: "0.05em" }}>
+                                {item.mode === 'hallucinate' ? 'HALLUCINATION' : 'UN-GLOSSED'} • B.S. Score: {item.bsScore !== undefined ? `${item.bsScore}%` : 'N/A'}
                             </span>
                             <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }} suppressHydrationWarning>
                                 {item.timestamp?.seconds
@@ -93,15 +106,53 @@ export default function CommunityFeed() {
                         </div>
 
                         <div>
-                            <p style={{ fontSize: "0.9rem", color: "var(--text-muted)", fontFamily: "'Roboto Mono', monospace", marginBottom: "8px", fontStyle: "italic" }}>
+                            <p style={{ fontSize: "0.9rem", color: "var(--text-muted)", fontFamily: "'Roboto Mono', monospace", marginBottom: "8px", fontStyle: "italic", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
                                 "{item.originalText}"
                             </p>
-                            <p className="human-text" style={{ fontSize: "1rem" }}>
+                            <p className={item.mode === 'hallucinate' ? "corporate-text" : "human-text"} style={{ fontSize: "1rem" }}>
                                 {item.translation}
                             </p>
                         </div>
+                        
+                        {/* Inline Actions */}
+                        <div style={{ display: "flex", gap: "16px", marginTop: "4px", paddingTop: "12px", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+                            <button className="feed-action-btn" onClick={(e) => { e.stopPropagation(); /* Future: handle like */ }}>
+                                <FaHeart /> <span style={{fontSize: "0.8rem"}}>Like</span>
+                            </button>
+                            <button className="feed-action-btn" onClick={(e) => { e.stopPropagation(); router.push(`/thread/${item.id}`); }}>
+                                <FaCommentAlt /> <span style={{fontSize: "0.8rem"}}>Discuss</span>
+                            </button>
+                            <button className="feed-action-btn" onClick={(e) => { 
+                                e.stopPropagation(); 
+                                navigator.clipboard.writeText(`${window.location.origin}/thread/${item.id}`);
+                                alert("Thread link copied!");
+                            }}>
+                                <FaShare /> <span style={{fontSize: "0.8rem"}}>Share</span>
+                            </button>
+                        </div>
                     </div>
                 ))}
+            </div>
+
+            <style dangerouslySetInnerHTML={{
+                __html: `
+                .feed-action-btn {
+                    background: transparent;
+                    border: none;
+                    color: var(--text-muted);
+                    display: flex;
+                    alignItems: center;
+                    gap: 6px;
+                    cursor: pointer;
+                    padding: 4px 8px;
+                    border-radius: 4px;
+                    transition: all 0.2s ease;
+                }
+                .feed-action-btn:hover {
+                    color: var(--signal-white);
+                    background: rgba(255,255,255,0.05);
+                }
+            `}} />
             </div>
 
             {/* AdSense Placeholder */}

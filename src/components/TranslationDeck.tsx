@@ -323,37 +323,51 @@ export default function TranslationDeck() {
                     </p>
                 </div>
 
-                {/* Feature: Word Economy (Phase 2) */}
+                {/* Feature: Word Economy (Phase 2 / Phase 4 tweaks) */}
                 {translation && wordStats && wordStats.original > 0 && (
                     <div style={{
                         marginTop: "16px",
                         padding: "16px",
-                        background: "rgba(0, 123, 255, 0.05)",
-                        borderLeft: "4px solid var(--electric-blue)",
+                        background: activeMode === 'hallucinate' ? "rgba(255, 87, 34, 0.05)" : "rgba(0, 123, 255, 0.05)",
+                        borderLeft: `4px solid ${activeMode === 'hallucinate' ? 'var(--warning-orange)' : 'var(--electric-blue)'}`,
                         borderRadius: "0 8px 8px 0",
                         display: "flex",
                         flexDirection: "column",
                         gap: "6px"
                     }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                            <span style={{ fontSize: "0.8rem", color: "var(--electric-blue)", textTransform: "uppercase", fontWeight: "bold", letterSpacing: "0.1em" }}>
-                                Word Economy
+                            <span style={{ fontSize: "0.8rem", color: activeMode === 'hallucinate' ? "var(--warning-orange)" : "var(--electric-blue)", textTransform: "uppercase", fontWeight: "bold", letterSpacing: "0.1em" }}>
+                                {activeMode === 'hallucinate' ? 'Capital Destruction' : 'Word Economy'}
                             </span>
-                            {wordStats.original > wordStats.target && (
+                            {activeMode !== 'hallucinate' && wordStats.original > wordStats.target && (
                                 <span style={{ fontSize: "0.75rem", background: "var(--electric-blue)", color: "white", padding: "2px 8px", borderRadius: "10px" }}>
                                     {Math.round((1 - wordStats.target / wordStats.original) * 100)}% SAVED
                                 </span>
                             )}
                         </div>
-                        <span style={{ color: "var(--signal-white)", fontSize: "0.95rem" }}>
-                            {wordStats.isDocument ? `Extracted ${wordStats.original} words.` : `Input: ${wordStats.original} words.`}
-                            {" "}Summarized to <strong style={{ color: "var(--electric-blue)" }}>{wordStats.target}</strong> words.
-                        </span>
-                        <div style={{ fontSize: "0.65rem", color: "var(--text-muted)", fontStyle: "italic" }}>
-                            {Math.round((1 - wordStats.target / wordStats.original) * 100) > 50
-                                ? "This could have been said in less than half the words."
-                                : "Cognitive load significantly reduced."}
-                        </div>
+                        
+                        {activeMode === 'hallucinate' ? (
+                            <>
+                                <span style={{ color: "var(--signal-white)", fontSize: "0.95rem" }}>
+                                    You just wasted <strong style={{ color: "var(--warning-orange)" }}>{((wordStats.target * 0.5) / 60).toFixed(2)} hours</strong> translating meaningless jargon into <strong style={{ color: "var(--warning-orange)" }}>{wordStats.target}</strong> words of more meaningless jargon.
+                                </span>
+                                <div style={{ fontSize: "0.65rem", color: "var(--text-muted)", fontStyle: "italic" }}>
+                                    That's approximately ${costOfConfusion} of company money burned.
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                <span style={{ color: "var(--signal-white)", fontSize: "0.95rem" }}>
+                                    {wordStats.isDocument ? `Extracted ${wordStats.original} words.` : `Input: ${wordStats.original} words.`}
+                                    {" "}Summarized to <strong style={{ color: "var(--electric-blue)" }}>{wordStats.target}</strong> words.
+                                </span>
+                                <div style={{ fontSize: "0.65rem", color: "var(--text-muted)", fontStyle: "italic" }}>
+                                    {Math.round((1 - wordStats.target / wordStats.original) * 100) > 50
+                                        ? "This could have been said in less than half the words."
+                                        : "Cognitive load significantly reduced."}
+                                </div>
+                            </>
+                        )}
                     </div>
                 )}
 
@@ -373,7 +387,7 @@ export default function TranslationDeck() {
                             Cost of Confusion
                         </span>
                         <span style={{ color: "var(--signal-white)", fontSize: "0.95rem" }}>
-                            This message wasted approximately <strong style={{ color: "var(--warning-orange)", fontSize: "1.1rem" }}>${costOfConfusion}</strong> in salaried company time.
+                            This message wasted approximately <strong style={{ color: "var(--warning-orange)", fontSize: "1.1rem" }}>${costOfConfusion}</strong> in company time.
                         </span>
                     </div>
                 )}
