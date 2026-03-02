@@ -65,9 +65,7 @@ export function getAllPostSlugs() {
         .filter(fileName => fileName.endsWith('.md'))
         .map(fileName => {
             return {
-                params: {
-                    slug: fileName.replace(/\.md$/, '')
-                }
+                slug: fileName.replace(/\.md$/, '')
             };
         });
 }
