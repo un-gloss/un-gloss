@@ -5,7 +5,8 @@ export interface JargonTerm {
     slug: string;
     corporateDefinition: string;
     theTruth: string;
-    passiveAggressiveRating: number;
+    passiveAggressiveRating?: number;
+    sincerityRating?: number;
     usageJargon: string;
     usageUnGlossed: string;
     seoMetaDescription: string;
@@ -73,6 +74,66 @@ export const dictionary: JargonTerm[] = [
         seoMetaDescription: "What does it mean to have a 'Hard Stop'? Decode the ultimate corporate exit strategy and learn how to use this phrase to escape useless meetings.",
         keywords: ["hard stop meaning", "meeting hard stop", "corporate phrases", "office survival", "professional synonyms"],
         relatedTerms: ["circle-back", "bandwidth"]
+    },
+    {
+        term: "Take this offline",
+        slug: "take-this-offline",
+        corporateDefinition: "A strategic pivot to discuss a matter privately, ensuring the broader meeting remains focused on high-level objectives rather than granular details.",
+        theTruth: "Please stop talking so my meeting can end on time.",
+        sincerityRating: 3,
+        usageJargon: "That's a great point, Todd, but let's take this offline so we can keep the agenda moving.",
+        usageUnGlossed: "Todd, nobody cares about your spreadsheet and I want to go to lunch.",
+        seoMetaDescription: "What does 'take it offline' really mean in a meeting? Learn the truth behind this common corporate deflection and how to survive the modern office.",
+        keywords: ["take this offline meaning", "meeting deflection", "office jargon", "take it offline alternative", "sync up meaning"],
+        relatedTerms: ["circle-back", "hard-stop"]
+    },
+    {
+        term: "Growth Mindset",
+        slug: "growth-mindset",
+        corporateDefinition: "An organizational philosophy emphasizing continuous learning, resilience, and the belief that abilities can be developed through dedication and hard work.",
+        theTruth: "A psychological trick to make you feel bad about complaining when we give you more work without more pay.",
+        sincerityRating: 2,
+        usageJargon: "We need everyone to approach this Q4 restructuring with a true growth mindset.",
+        usageUnGlossed: "Three people quit, you have to do their jobs now, and you aren't allowed to be mad about it.",
+        seoMetaDescription: "What is a 'growth mindset' in business? Decode this HR buzzword and discover the un-glossed reality of workplace resilience training.",
+        keywords: ["growth mindset corporate", "HR buzzwords", "growth mindset meaning", "toxic positivity at work", "corporate philosophy"],
+        relatedTerms: ["synergy", "alignment"]
+    },
+    {
+        term: "Low-hanging fruit",
+        slug: "low-hanging-fruit",
+        corporateDefinition: "Easily achievable goals or tasks that can be rapidly completed to demonstrate immediate value and build early momentum for a project.",
+        theTruth: "The incredibly obvious, simple stuff we should have done months ago but somehow didn't.",
+        sincerityRating: 5,
+        usageJargon: "Let's tackle the low-hanging fruit first to get some quick wins on the board for the stakeholders.",
+        usageUnGlossed: "Let's do the easiest possible thing so the executives don't fire us.",
+        seoMetaDescription: "What does 'low-hanging fruit' mean in business? Strip away the jargon and find out what your manager actually wants you to do.",
+        keywords: ["low hanging fruit meaning", "quick wins", "business metaphors", "easy tasks jargon", "office slang"],
+        relatedTerms: ["bandwidth", "alignment"]
+    },
+    {
+        term: "Touch base",
+        slug: "touch-base",
+        corporateDefinition: "A brief, informal alignment session to ensure ongoing synchronization and provide status updates on active deliverables.",
+        theTruth: "A completely unnecessary 15-minute interruption to ask you if you've done the thing yet.",
+        sincerityRating: 4,
+        usageJargon: "I just wanted to touch base regarding the deliverables for the Henderson account.",
+        usageUnGlossed: "Are you done yet?",
+        seoMetaDescription: "What does it mean to 'touch base'? Learn the real definition of this classic office phrase and how to survive micro-management.",
+        keywords: ["touch base meaning", "sync up alternative", "micromanagement jargon", "office check-in", "corporate phrases"],
+        relatedTerms: ["alignment", "circle-back"]
+    },
+    {
+        term: "Holistic approach",
+        slug: "holistic-approach",
+        corporateDefinition: "A comprehensive strategy that considers the interconnectedness of all system components rather than addressing isolated elements independently.",
+        theTruth: "We have no specific plan so we're just going to broadly look at everything until a solution magically appears.",
+        sincerityRating: 2,
+        usageJargon: "We need to take a more holistic approach to our user acquisition funnel if we want to move the needle.",
+        usageUnGlossed: "Nobody knows why sales are down, so let's just brainstorm for an hour.",
+        seoMetaDescription: "What is a 'holistic approach' in the corporate world? Un-gloss this abstract buzzword and learn what executives are really trying to say.",
+        keywords: ["holistic approach business", "holistic strategy meaning", "executive buzzwords", "corporate fluff", "big picture jargon"],
+        relatedTerms: ["synergy", "alignment"]
     }
 ];
 

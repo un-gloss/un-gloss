@@ -122,6 +122,18 @@ export default async function TermDefinitionPage({ params }: Props) {
                             </div>
                         </div>
                     )}
+                    
+                    {/* Sincerity Rating */}
+                    {termData.sincerityRating && (
+                         <div style={{ textAlign: "right" }}>
+                            <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "4px" }}>
+                                Sincerity Rating
+                            </div>
+                            <div style={{ fontSize: "2rem", fontWeight: "bold", color: "var(--electric-blue)", lineHeight: "1" }}>
+                                {termData.sincerityRating} <span style={{ fontSize: "1rem", color: "var(--text-muted)" }}>/ 10</span>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* The Template: Definitions */}
