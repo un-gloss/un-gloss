@@ -26,7 +26,7 @@ export default function BlogIndex() {
                     </div>
                 </Link>
                 <div style={{ display: "flex", gap: "24px", alignItems: "center", fontSize: "0.85rem", fontWeight: "bold", letterSpacing: "0.05em", textTransform: "uppercase" }}>
-                     <Link href="/" style={{ color: "var(--text-muted)", textDecoration: "none" }}>Translator</Link>
+                     <Link href="/" style={{ color: "var(--text-muted)", textDecoration: "none" }}>Home</Link>
                      <span style={{ color: "var(--signal-white)" }}>Blog</span>
                 </div>
             </header>

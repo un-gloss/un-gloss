@@ -10,6 +10,7 @@ import { GoogleAnalytics } from '@next/third-parties/google';
 import { AuthProvider } from "@/context/AuthContext";
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from '@vercel/analytics/react';
+import Link from 'next/link';
 
 
 
@@ -33,6 +34,9 @@ export default function RootLayout({
               Un<span>gloss</span>
             </a>
             <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+              <Link href="/blog" style={{ color: "var(--text-muted)", textDecoration: "none", fontSize: "0.9rem", fontWeight: "bold" }}>
+                  Blog
+              </Link>
               <ThemeToggle />
             </div>
           </header>
