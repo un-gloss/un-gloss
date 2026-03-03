@@ -10,48 +10,48 @@ export interface PressRelease {
 
 export const PRESS_RELEASES: PressRelease[] = [
     {
-        id: "pr-wef-2026",
-        source: "World Economic Forum",
-        title: "Global Synergy Initiative",
-        date: "January 14, 2026",
-        category: "Government",
-        original: "We are establishing a multi-stakeholder paradigm to foster cross-border synergy and holistic resilience across macroeconomic vectors, ensuring sustainable bandwidth for future-proofed growth.",
-        translated: "We had a meeting about the economy. Nothing was decided."
-    },
-    {
-        id: "pr-hooli-layoffs",
-        source: "Hooli Inc.",
-        title: "Organizational Restructuring",
-        date: "February 28, 2026",
+        id: "pr-bp-spill",
+        source: "BP",
+        title: "Deepwater Horizon Response",
+        date: "May 2010",
         category: "Corporate Apology",
-        original: "In an effort to optimize our operational footprint and realign our core competencies with shifting market dynamics, we have made the difficult decision to reduce our global headcount and transition impacted roles.",
-        translated: "We missed our revenue targets, so we're firing people to save the CEO's bonus."
+        original: "We have been dealing with a massive flow of hydrocarbons... I would like my life back.",
+        translated: "We destroyed the Gulf of Mexico, but frankly, I'm the real victim here because I have to work weekends."
     },
     {
-        id: "pr-un-climate",
-        source: "United Nations",
-        title: "Climate Action Protocol",
-        date: "November 05, 2025",
-        category: "Government",
-        original: "The assembly strongly urges member states to operationalize their declarative commitments and implement harmonized frameworks for the phased mitigation of anthropogenic greenhouse gas emissions.",
-        translated: "Please stop polluting. We know you won't, but please try."
-    },
-    {
-        id: "pr-zeta-data",
-        source: "ZetaCorp",
-        title: "Security Incident Update",
-        date: "March 01, 2026",
+        id: "pr-meta-privacy",
+        source: "Meta (Facebook)",
+        title: "Platform Privacy Update",
+        date: "March 2018",
         category: "Tech Announcement",
-        original: "We recently identified an unauthorized exposure of certain non-critical telemetry data. While we have no evidence of malicious exploitation, we are proactively deploying enhanced cryptographic protocols out of an abundance of caution.",
-        translated: "We got hacked. Your data is gone. We are pretending it's fine."
+        original: "We have a responsibility to protect your data, and if we can't then we don't deserve to serve you... We will learn from this experience to secure our platform further and make our community safer for everyone going forward.",
+        translated: "We sold your data to a political consulting firm. We're sorry we got caught."
     },
     {
-        id: "pr-fed-rates",
-        source: "Federal Reserve",
-        title: "Monetary Policy Statement",
-        date: "December 12, 2025",
+        id: "pr-united-airlines",
+        source: "United Airlines",
+        title: "Flight 3411 Incident",
+        date: "April 2017",
+        category: "Corporate Apology",
+        original: "This is an upsetting event to all of us here at United. I apologize for having to re-accommodate these customers.",
+        translated: "We physically dragged a paying customer off a plane because we overbooked it."
+    },
+    {
+        id: "pr-enron",
+        source: "Enron",
+        title: "Annual Report Letter",
+        date: "Early 2001",
         category: "Finance",
-        original: "The Committee seeks to achieve maximum employment and inflation at the rate of 2 percent over the longer run. In support of these goals, the Committee decided to maintain the target range for the federal funds rate.",
-        translated: "We aren't changing interest rates because we don't want to break the stock market before the holidays."
+        original: "Our performance and business capabilities have never been stronger... We have transformed ourselves from a pipeline company to an Internet-based communications and energy trading company.",
+        translated: "We are currently committing the largest accounting fraud in corporate history."
+    },
+    {
+        id: "pr-peloton",
+        source: "Peloton",
+        title: "Tread+ Recall",
+        date: "May 2021",
+        category: "Corporate Apology",
+        original: "I want to be clear, Peloton made a mistake in our initial response to the Consumer Product Safety Commission’s request that we recall the Tread+. We should have engaged more productively with them from the outset.",
+        translated: "Our treadmills injured children, but we fought the recall for a month to protect our stock price."
     }
 ];
