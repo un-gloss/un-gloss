@@ -8,6 +8,7 @@ import { FaHeart, FaCommentAlt, FaShare } from "react-icons/fa";
 import { useToast } from "@/context/ToastContext";
 import Link from "next/link";
 import { getAllTerms } from "@/lib/dictionary";
+import AdSenseWidget from "./AdSenseWidget";
 
 // Temporary mock data until Firebase is fully connected by the user
 const MOCK_FEED = [
@@ -226,16 +227,16 @@ export default function CommunityFeed({ filter, titleOverride }: { filter?: Feed
                 }
             `}} />
 
-            {/* AdSense Placeholder */}
+            {/* Live Google AdSense Slot */}
             <div className="glass-panel" style={{
-                padding: "24px",
+                padding: "24px 16px",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                border: "1px dashed var(--text-muted)",
+                border: "1px dashed rgba(255,255,255,0.1)",
                 backgroundColor: "rgba(0,0,0,0.2)"
             }}>
-                <span style={{ color: "var(--text-muted)", fontSize: "0.85rem", textTransform: "uppercase", letterSpacing: "0.1em" }}>[ Ad Space ]</span>
+                <AdSenseWidget />
             </div>
 
         </div>

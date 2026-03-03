@@ -12,6 +12,7 @@ import ToastContainer from "@/components/ToastContainer";
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from '@vercel/analytics/react';
 import Link from 'next/link';
+import Script from 'next/script';
 
 
 
@@ -27,6 +28,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8741548022674782"
+          strategy="afterInteractive"
+          crossOrigin="anonymous"
+        />
+      </head>
       <body>
         <div className="container">
           <header className="header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 24px", borderBottom: "1px solid var(--glass-border)" }}>
