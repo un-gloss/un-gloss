@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { collection, query, orderBy, limit, onSnapshot } from "firebase/firestore";
+import { collection, query, orderBy, limit, onSnapshot, where } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 import { FaHeart, FaCommentAlt, FaShare } from "react-icons/fa";
+import { useToast } from "@/context/ToastContext";
 
 // Temporary mock data until Firebase is fully connected by the user
 const MOCK_FEED = [
@@ -31,17 +32,36 @@ const MOCK_FEED = [
     }
 ];
 
-export default function CommunityFeed() {
+export interface FeedFilter {
+    field: string;
+    operator: "==";
+    value: string;
+}
+
+export default function CommunityFeed({ filter, titleOverride }: { filter?: FeedFilter, titleOverride?: string }) {
     const [feed, setFeed] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
+    const { addToast } = useToast();
 
     useEffect(() => {
-        const q = query(
+        let q = query(
             collection(db, "translations"),
             orderBy("timestamp", "desc"),
             limit(20)
         );
+
+        if (filter) {
+            // If filtering, we must also orderBy the filtered field first per Firestore rules, or remove the ascending timestamp order
+            // To keep it simple for now, we'll just filter without strict ordering if complex index doesn't exist, 
+            // or we use simple query
+            q = query(
+                collection(db, "translations"),
+                where(filter.field, filter.operator, filter.value),
+                limit(20)
+            );
+        }
+
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const translations = snapshot.docs.map(doc => ({
                 id: doc.id,
@@ -61,14 +81,14 @@ export default function CommunityFeed() {
             setLoading(false);
         });
         return () => unsubscribe();
-    }, []);
+    }, [filter]);
 
     return (
         <div style={{ display: "flex", flexDirection: "column", gap: "24px", height: "100%" }}>
 
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <h2 style={{ fontSize: "1.2rem", fontWeight: "bold", color: "var(--signal-white)", letterSpacing: "0.05em", textTransform: "uppercase" }}>
-                    The Hall of Shame
+                    {titleOverride || "The Hall of Shame"}
                 </h2>
                 <span style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>LIVE FEED</span>
             </div>
@@ -125,7 +145,7 @@ export default function CommunityFeed() {
                             <button className="feed-action-btn" onClick={(e) => { 
                                 e.stopPropagation(); 
                                 navigator.clipboard.writeText(`${window.location.origin}/thread/${item.id}`);
-                                alert("Thread link copied!");
+                                addToast("Thread link copied to clipboard!", "info");
                             }}>
                                 <FaShare /> <span style={{fontSize: "0.8rem"}}>Share</span>
                             </button>

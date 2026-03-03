@@ -21,7 +21,12 @@ const MOCK_TRENDING: TrendingCompany[] = [
     { name: "Hooli", bsScore: 91, wastedCapital: "310,400", trend: 'up' },
 ];
 
-export default function TrendingWidget() {
+interface TrendingWidgetProps {
+    onTrendClick?: (type: 'source' | 'region', name: string) => void;
+    activeSelection?: string;
+}
+
+export default function TrendingWidget({ onTrendClick, activeSelection }: TrendingWidgetProps = {}) {
     const [trending, setTrending] = useState<TrendingCompany[]>(MOCK_TRENDING);
     const [viewMode, setViewMode] = useState<'corporations' | 'regions'>('corporations');
     const [loading, setLoading] = useState(true);
@@ -141,14 +146,22 @@ export default function TrendingWidget() {
                 ) : trending.map((company, index) => (
                     <div
                         key={company.name}
+                        onClick={() => onTrendClick && onTrendClick(viewMode === 'corporations' ? 'source' : 'region', company.name)}
                         style={{
                             display: "grid",
                             gridTemplateColumns: "30px 1fr auto",
                             alignItems: "center",
                             gap: "12px",
-                            padding: "8px 0",
-                            borderBottom: index !== trending.length - 1 ? "1px solid rgba(255,255,255,0.05)" : "none"
+                            padding: "8px 12px", // Add horizontal padding for hover state
+                            margin: "0 -12px", // Offset horizontal padding to keep alignment
+                            cursor: onTrendClick ? "pointer" : "default",
+                            borderBottom: index !== trending.length - 1 ? "1px solid rgba(255,255,255,0.05)" : "none",
+                            background: activeSelection === company.name ? "rgba(255, 87, 34, 0.1)" : "transparent",
+                            borderRadius: "8px",
+                            transition: "background 0.2s"
                         }}
+                        onMouseOver={(e) => { if (onTrendClick) e.currentTarget.style.background = activeSelection === company.name ? "rgba(255, 87, 34, 0.15)" : "rgba(255,255,255,0.03)" }}
+                        onMouseOut={(e) => { if (onTrendClick) e.currentTarget.style.background = activeSelection === company.name ? "rgba(255, 87, 34, 0.1)" : "transparent" }}
                     >
                         <span style={{
                             fontSize: "0.75rem",
@@ -180,24 +193,27 @@ export default function TrendingWidget() {
                 ))}
             </div>
 
-            <div style={{
-                marginTop: "20px",
-                paddingTop: "15px",
-                borderTop: "1px solid rgba(255,255,255,0.1)",
-                textAlign: "center"
-            }}>
-                <Link href="/global-index" style={{
-                    display: "inline-block",
-                    textDecoration: "none",
-                    color: "var(--electric-blue)",
-                    fontSize: "0.75rem",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.05em",
-                    fontWeight: "bold"
+            {/* Only show the 'View Global Index' link if we are NOT already on the Global Index page (i.e. onTrendClick is undefined) */}
+            {!onTrendClick && (
+                <div style={{
+                    marginTop: "20px",
+                    paddingTop: "15px",
+                    borderTop: "1px solid rgba(255,255,255,0.1)",
+                    textAlign: "center"
                 }}>
-                    View Global B.S. Index →
-                </Link>
-            </div>
+                    <Link href="/global-index" style={{
+                        display: "inline-block",
+                        textDecoration: "none",
+                        color: "var(--electric-blue)",
+                        fontSize: "0.75rem",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.05em",
+                        fontWeight: "bold"
+                    }}>
+                        View Global B.S. Index →
+                    </Link>
+                </div>
+            )}
         </div>
     );
 }

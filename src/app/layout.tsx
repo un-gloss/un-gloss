@@ -36,6 +36,7 @@ export default function RootLayout({
             </Link>
             <nav style={{ display: "flex", gap: "24px", alignItems: "center", fontSize: "0.9rem", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.05em" }}>
               <Link href="/" className="nav-link">Home</Link>
+              <Link href="/global-index" className="nav-link" style={{ color: "var(--warning-orange)" }}>Global Index</Link>
               <Link href="/blog" className="nav-link">Blog</Link>
               <Link href="/preferences" className="nav-link">Preferences</Link>
             </nav>
