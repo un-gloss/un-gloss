@@ -44,6 +44,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
 }
 
+// 1.5 Setup SSG (Static Site Generation / pre-rendering logic)
+export async function generateStaticParams() {
+    const allTerms = getAllTerms();
+    return allTerms.map((term) => ({
+        term: term.slug,
+    }));
+}
+
 export default async function TermDefinitionPage({ params }: Props) {
     const { term } = await params;
     const termData = getTermBySlug(term);
@@ -82,6 +90,29 @@ export default async function TermDefinitionPage({ params }: Props) {
                     "name": termData.term,
                     "description": termData.theTruth
                 }
+            },
+            {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Home",
+                        "item": "https://www.un-gloss.com"
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Global Index",
+                        "item": "https://www.un-gloss.com/global-index"
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 3,
+                        "name": termData.term,
+                        "item": `https://www.un-gloss.com/meaning/${termData.slug}`
+                    }
+                ]
             }
         ]
     };

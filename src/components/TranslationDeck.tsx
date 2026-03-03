@@ -586,6 +586,7 @@ export default function TranslationDeck() {
                             <button
                                 className="action-button"
                                 onClick={handleDownloadCard}
+                                aria-label={`Download image for ${source || "Jargon"} translation`}
                                 style={{
                                     fontSize: "0.8rem",
                                     padding: "8px 16px",
