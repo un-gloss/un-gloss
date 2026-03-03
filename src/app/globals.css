@@ -201,6 +201,40 @@ h6 {
   padding: 32px;
   box-shadow: var(--glass-shadow);
   transition: all 0.3s ease;
+  position: relative;
+}
+
+/* Peeled Corner Effect */
+.peeled-corner::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  border-width: 0 24px 24px 0;
+  border-style: solid;
+  border-color: var(--obsidian) var(--obsidian) rgba(255,255,255,0.1) rgba(255,255,255,0.1);
+  box-shadow: -2px 2px 4px rgba(0,0,0,0.4);
+  border-bottom-left-radius: 4px;
+  display: block;
+  width: 0;
+}
+
+/* Animation Utilities */
+@keyframes deblur {
+  0% {
+    filter: blur(8px);
+    opacity: 0.5;
+    transform: translateY(5px);
+  }
+  100% {
+    filter: blur(0px);
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.deblur-effect {
+  animation: deblur 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .glass-input {
@@ -313,15 +347,49 @@ h6 {
   .glass-panel {
     padding: 20px;
   }
+}
 
-  .action-button {
-    width: 100%;
-    padding: 14px 20px;
+/* Tab Bar (Desktop & sticky mobile) */
+.tab-bar-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  padding: 0 0 16px 0;
+  margin-bottom: -8px;
+  position: relative;
+  z-index: 20;
+}
+
+@media (max-width: 768px) {
+  .tab-bar-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(15, 15, 15, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--glass-border);
+    padding: 16px;
+    margin-bottom: 0;
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.8);
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: flex-start;
   }
-
-  .btn-secondary {
-    width: 100%;
-    margin-bottom: 12px;
+  
+  /* Add padding to bottom of page so content isn't hidden by sticky footer */
+  body {
+    padding-bottom: 80px;
+  }
+  
+  .action-button {
+    white-space: nowrap;
+    flex: 1 0 auto;
+    font-size: 0.8rem;
+    padding: 10px 16px;
   }
 }
 

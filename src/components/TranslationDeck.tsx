@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { FaLinkedinIn, FaRedditAlien, FaFacebookF, FaInstagram, FaDownload } from "react-icons/fa";
+import { FaLinkedinIn, FaRedditAlien, FaFacebookF, FaInstagram, FaDownload, FaTimes, FaClipboard } from "react-icons/fa";
 import { toPng } from "html-to-image";
 import ShareCard from "./ShareCard";
 
@@ -150,6 +150,23 @@ export default function TranslationDeck() {
         }
     };
 
+    const handleClear = () => {
+        setInput("");
+        setTranslation("");
+    };
+
+    const handleAutoPaste = async () => {
+        try {
+            const text = await navigator.clipboard.readText();
+            if (text) {
+                setInput(text);
+            }
+        } catch (err) {
+            console.error('Failed to read clipboard contents: ', err);
+            alert("Clipboard access denied or empty.");
+        }
+    };
+
     const handleCopy = () => {
         navigator.clipboard.writeText(translation);
         alert("Copied to clipboard.");
@@ -201,15 +218,45 @@ export default function TranslationDeck() {
     return (
         <div style={{ display: "flex", flexDirection: "column", gap: "24px", maxWidth: "800px", margin: "0 auto" }}>
 
+            {/* The Pivot (Action Tab Bar) - Moved above input for better desktop flow, sticky bottom on mobile */}
+            <div className="tab-bar-container">
+                <button
+                    className={`action-button btn-ungloss ${activeMode === 'ungloss' && translation ? 'active' : ''}`}
+                    onClick={() => handleTranslate("ungloss")}
+                    disabled={isLoading || !input.trim()}
+                >
+                    {isLoading && activeMode === 'ungloss' ? "ANALYZING..." : "UN-GLOSS"}
+                </button>
+
+                <button
+                    className={`action-button btn-pivot ${activeMode === 'pivot' && translation ? 'active' : ''}`}
+                    onClick={() => handleTranslate("pivot")}
+                    disabled={isLoading || !input.trim()}
+                >
+                    {isLoading && activeMode === 'pivot' ? "PIVOTING..." : "PROFESSIONAL PIVOT"}
+                </button>
+
+                <button
+                    className={`action-button btn-secondary ${activeMode === 'hallucinate' && translation ? 'active' : ''}`}
+                    onClick={() => handleTranslate("hallucinate")}
+                    disabled={isLoading || !input.trim()}
+                    style={{
+                        borderColor: activeMode === 'hallucinate' && translation ? "var(--warning-orange)" : "var(--glass-border)",
+                    }}
+                >
+                    {isLoading && activeMode === 'hallucinate' ? "HALLUCINATING..." : "HALLUCINATE"}
+                </button>
+            </div>
+
             {/* The Fog (Input Pane) */}
-            <div className="glass-panel" style={{ position: "relative" }}>
+            <div className="glass-panel peeled-corner" style={{ position: "relative" }}>
 
                 {/* Feature: B.S. Meter */}
                 {translation && bsScore !== null && (
-                    <div style={{
+                    <div className="deblur-effect" style={{
                         position: "absolute",
                         top: "-20px",
-                        right: "20px",
+                        right: "40px",
                         background: "var(--obsidian-light)",
                         border: "1px solid var(--glass-border)",
                         padding: "8px 16px",
@@ -234,6 +281,22 @@ export default function TranslationDeck() {
 
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "16px", alignItems: "center" }}>
                     <span style={{ color: "var(--text-muted)", fontSize: "0.85rem", textTransform: "uppercase", letterSpacing: "0.1em" }}>// Input (The Fog)</span>
+                    <div style={{ display: "flex", gap: "12px" }}>
+                        <button 
+                            onClick={handleAutoPaste}
+                            style={{ background: "transparent", border: "none", color: "var(--electric-blue)", cursor: "pointer", fontSize: "0.75rem", display: "flex", alignItems: "center", gap: "4px", textTransform: "uppercase", fontWeight: "bold" }}
+                        >
+                            <FaClipboard /> Paste
+                        </button>
+                        {input && (
+                            <button 
+                                onClick={handleClear}
+                                style={{ background: "transparent", border: "none", color: "var(--warning-orange)", cursor: "pointer", fontSize: "0.75rem", display: "flex", alignItems: "center", gap: "4px", textTransform: "uppercase", fontWeight: "bold" }}
+                            >
+                                <FaTimes /> Clear
+                            </button>
+                        )}
+                    </div>
                 </div>
 
                 <div style={{ position: "relative" }}>
@@ -354,82 +417,48 @@ export default function TranslationDeck() {
                         </div>
                     )}
                     
-                    <div style={{ marginTop: "6px", fontSize: "0.65rem", color: "var(--text-muted)", fontStyle: "italic" }}>
-                        Identify the source to help track the Global B.S. Index. Try clicking the input to see common tags.
-                    </div>
+                    {/* Feature: Passive-Aggressive Slider (Only for Pivot) */}
+                    {activeMode === "pivot" && (
+                        <div style={{ padding: "16px 0 0 0", marginTop: "16px", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
+                                <label style={{ fontSize: "0.85rem", color: "var(--signal-white)" }}>Tonal Intensity (Polite ➜ Passive-Aggressive)</label>
+                                <span style={{ fontSize: "0.85rem", color: "var(--electric-blue)", fontWeight: "bold" }}>{toneIntensity}%</span>
+                            </div>
+                            <input
+                                type="range"
+                                min="0"
+                                max="100"
+                                value={toneIntensity}
+                                onChange={(e) => setToneIntensity(parseInt(e.target.value))}
+                                onMouseUp={() => {
+                                    if (translation && activeMode === "pivot") {
+                                        handleTranslate("pivot");
+                                    }
+                                }}
+                                onTouchEnd={() => {
+                                    if (translation && activeMode === "pivot") {
+                                        handleTranslate("pivot");
+                                    }
+                                }}
+                                style={{
+                                    width: "100%",
+                                    accentColor: "var(--electric-blue)",
+                                    cursor: "pointer"
+                                }}
+                            />
+                        </div>
+                    )}
                 </div>
             </div>
-
-            {/* The Pivot (Action Bar) */}
-            <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "16px", padding: "10px 0" }}>
-                <button
-                    className={`action-button btn-ungloss ${activeMode === 'ungloss' && translation ? 'active' : ''}`}
-                    onClick={() => handleTranslate("ungloss")}
-                    disabled={isLoading || !input.trim()}
-                >
-                    {isLoading && activeMode === 'ungloss' ? "ANALYZING..." : "UN-GLOSS"}
-                </button>
-
-                <button
-                    className={`action-button btn-pivot ${activeMode === 'pivot' && translation ? 'active' : ''}`}
-                    onClick={() => handleTranslate("pivot")}
-                    disabled={isLoading || !input.trim()}
-                >
-                    {isLoading && activeMode === 'pivot' ? "PIVOTING..." : "PROFESSIONAL PIVOT"}
-                </button>
-
-                <button
-                    className={`action-button btn-secondary ${activeMode === 'hallucinate' && translation ? 'active' : ''}`}
-                    onClick={() => handleTranslate("hallucinate")}
-                    disabled={isLoading || !input.trim()}
-                    style={{
-                        borderColor: activeMode === 'hallucinate' && translation ? "var(--warning-orange)" : "var(--glass-border)",
-                    }}
-                >
-                    {isLoading && activeMode === 'hallucinate' ? "HALLUCINATING..." : "HALLUCINATE"}
-                </button>
-            </div>
-
-            {/* Feature: Passive-Aggressive Slider (Only for Pivot) */}
-            {activeMode === "pivot" && (
-                <div style={{ padding: "0 20px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
-                        <label style={{ fontSize: "0.85rem", color: "var(--signal-white)" }}>Tonal Intensity (Polite ➜ Passive-Aggressive)</label>
-                        <span style={{ fontSize: "0.85rem", color: "var(--electric-blue)", fontWeight: "bold" }}>{toneIntensity}%</span>
-                    </div>
-                    <input
-                        type="range"
-                        min="0"
-                        max="100"
-                        value={toneIntensity}
-                        onChange={(e) => setToneIntensity(parseInt(e.target.value))}
-                        onMouseUp={() => {
-                            if (translation && activeMode === "pivot") {
-                                handleTranslate("pivot");
-                            }
-                        }}
-                        onTouchEnd={() => {
-                            if (translation && activeMode === "pivot") {
-                                handleTranslate("pivot");
-                            }
-                        }}
-                        style={{
-                            width: "100%",
-                            accentColor: "var(--electric-blue)",
-                            cursor: "pointer"
-                        }}
-                    />
-                </div>
-            )}
 
             {/* The Clarity (Output Pane) */}
             <div
-                className="glass-panel"
+                className={`glass-panel peeled-corner ${translation ? 'deblur-effect' : ''}`}
+                key={translation ? translation.substring(0, 10) : 'empty'} // Force re-render animation
                 style={{
                     background: "var(--obsidian)",
                     border: translation ? `1px solid ${activeMode === 'ungloss' ? 'var(--warning-orange)' : 'var(--electric-blue)'}` : "1px solid var(--glass-border)",
                     opacity: translation ? 1 : 0.4,
-                    filter: translation ? "none" : "blur(4px)",
                     minHeight: "150px",
                     display: "flex",
                     flexDirection: "column",
@@ -442,13 +471,14 @@ export default function TranslationDeck() {
                             color: translation ? (activeMode === 'ungloss' ? "var(--warning-orange)" : "var(--electric-blue)") : "var(--text-muted)",
                             fontSize: "0.85rem",
                             textTransform: "uppercase",
-                            letterSpacing: "0.1em"
+                            letterSpacing: "0.1em",
+                            fontWeight: translation ? "bold" : "normal"
                         }}>
               // {activeMode === 'ungloss' ? 'The Truth' : 'The Polish'}
                         </span>
                     </div>
 
-                    <p className={activeMode === 'ungloss' ? "human-text" : "corporate-text"} style={{ whiteSpace: "pre-wrap" }}>
+                    <p className={activeMode === 'ungloss' ? "human-text" : "corporate-text"} style={{ whiteSpace: "pre-wrap", fontWeight: translation ? "600" : "normal" }}>
                         {translation || "Awaiting input..."}
                     </p>
                 </div>

@@ -1,9 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import CommunityFeed, { FeedFilter } from "@/components/CommunityFeed";
-import TrendingWidget from "@/components/TrendingWidget";
+import dynamic from 'next/dynamic';
+import { FeedFilter } from "@/components/CommunityFeed";
 import StatsBar from "@/components/StatsBar";
+
+// Lazy load heavy components
+const CommunityFeed = dynamic(() => import('@/components/CommunityFeed'), {
+    loading: () => <div style={{ padding: "40px", textAlign: "center", color: "var(--text-muted)" }}>Loading Hall of Shame...</div>
+});
+
+const TrendingWidget = dynamic(() => import('@/components/TrendingWidget'), {
+    loading: () => <div style={{ padding: "20px", textAlign: "center", color: "var(--text-muted)" }}>Loading trends...</div>
+});
 
 export default function GlobalIndexPage() {
     // State to hold the current filter. null means "show all"

@@ -1,9 +1,17 @@
 import TranslationDeck from "@/components/TranslationDeck";
-import CommunityFeed from "@/components/CommunityFeed";
 import StatsBar from "@/components/StatsBar";
 import HistorySidebar from "@/components/HistorySidebar";
-import TrendingWidget from "@/components/TrendingWidget";
 import AmbientBackground from "@/components/AmbientBackground";
+import dynamic from 'next/dynamic';
+
+// Lazy load heavy components that require Firestore fetches
+const CommunityFeed = dynamic(() => import('@/components/CommunityFeed'), {
+  loading: () => <div style={{ padding: "20px", textAlign: "center", color: "var(--text-muted)" }}>Loading feed...</div>
+});
+
+const TrendingWidget = dynamic(() => import('@/components/TrendingWidget'), {
+  loading: () => <div style={{ padding: "20px", textAlign: "center", color: "var(--text-muted)" }}>Loading trends...</div>
+});
 
 export default function Home() {
   return (

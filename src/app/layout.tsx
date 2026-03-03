@@ -54,10 +54,21 @@ export default function RootLayout({
             <AuthProvider>
               {children}
             </AuthProvider>
-            <footer style={{ borderTop: "1px solid var(--glass-border)", padding: "32px 24px", marginTop: "40px", textAlign: "center", fontSize: "0.85rem", color: "var(--text-muted)", display: "flex", justifyContent: "center", gap: "32px", textTransform: "uppercase", letterSpacing: "0.05em", flexWrap: "wrap" }}>
-              <Link href="/about" className="nav-link">About Us</Link>
-              <Link href="/privacy" className="nav-link">Privacy Policy</Link>
-              <Link href="/terms" className="nav-link">Terms of Service</Link>
+            <footer style={{ borderTop: "1px solid var(--glass-border)", padding: "40px 24px 100px 24px", marginTop: "40px", display: "flex", flexDirection: "column", alignItems: "center", gap: "24px" }}>
+              <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "16px", color: "var(--text-muted)", fontSize: "0.85rem" }}>
+                <span style={{ color: "var(--signal-white)", fontWeight: "bold" }}>TRENDING DECODES:</span>
+                <Link href="/meaning/synergy" className="nav-link">Synergy</Link>
+                <Link href="/meaning/bandwidth" className="nav-link">Bandwidth</Link>
+                <Link href="/meaning/circle-back" className="nav-link">Circle Back</Link>
+                <Link href="/meaning/deep-dive" className="nav-link">Deep Dive</Link>
+                <Link href="/meaning/take-this-offline" className="nav-link">Take This Offline</Link>
+              </div>
+
+              <div style={{ fontSize: "0.85rem", color: "var(--text-muted)", display: "flex", justifyContent: "center", gap: "32px", textTransform: "uppercase", letterSpacing: "0.05em", flexWrap: "wrap" }}>
+                <Link href="/about" className="nav-link">About Us</Link>
+                <Link href="/privacy" className="nav-link">Privacy Policy</Link>
+                <Link href="/terms" className="nav-link">Terms of Service</Link>
+              </div>
             </footer>
           </div>
           {process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID && (
