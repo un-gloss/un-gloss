@@ -20,7 +20,39 @@ export default function TranslationDeck() {
     const [costOfConfusion, setCostOfConfusion] = useState<string | null>(null);
     const [moneySaved, setMoneySaved] = useState<string | null>(null);
     const [wordStats, setWordStats] = useState<{ original: number; target: number; isDocument: boolean } | null>(null);
+    const [isSourceFocused, setIsSourceFocused] = useState(false);
     const shareCardRef = useRef<HTMLDivElement>(null);
+
+    const sourceTags = [
+        "BigTech", "MiddleManagement", "Recruiting", "VentureCapital", 
+        "Consulting", "Marketing", "Legal", "HumanResources", 
+        "ExecutiveSuite", "StartupFounder", "AgileCoach"
+    ];
+
+    const filteredTags = sourceTags.filter(tag => 
+        tag.toLowerCase().includes(source.toLowerCase().replace('#', ''))
+    );
+
+    const placeholders = [
+        "Let's touch base on the mission-critical deliverables...",
+        "We need to synergize our cross-functional bandwidth...",
+        "Let's take this offline and circle back next week...",
+        "We are shifting the paradigm with scalable solutions...",
+        "I don't have the bandwidth for this right now...",
+        "Let's open the kimono and look at the raw data...",
+        "We need to boil the ocean to find the right metrics..."
+    ];
+    const [placeholderIndex, setPlaceholderIndex] = useState(0);
+
+    // Dynamic Placeholder Rotation
+    useEffect(() => {
+        if (!input) {
+            const interval = setInterval(() => {
+                setPlaceholderIndex((prev) => (prev + 1) % placeholders.length);
+            }, 3000);
+            return () => clearInterval(interval);
+        }
+    }, [input, placeholders.length]);
 
     // Automatically reset the output when the user types new text
     useEffect(() => {
@@ -204,28 +236,126 @@ export default function TranslationDeck() {
                     <span style={{ color: "var(--text-muted)", fontSize: "0.85rem", textTransform: "uppercase", letterSpacing: "0.1em" }}>// Input (The Fog)</span>
                 </div>
 
-                <textarea
-                    className="glass-input"
-                    rows={5}
-                    placeholder="Paste the corporate jargon (or raw human truth) here..."
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                />
+                <div style={{ position: "relative" }}>
+                    <textarea
+                        className="glass-input"
+                        rows={5}
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        style={{ position: "relative", zIndex: 2, background: input ? "rgba(255, 255, 255, 0.05)" : "transparent" }}
+                    />
+                    {!input && (
+                        <div
+                            onClick={() => setInput(placeholders[placeholderIndex])}
+                            style={{
+                                position: "absolute",
+                                top: "16px",
+                                left: "16px",
+                                right: "16px",
+                                color: "var(--text-muted)",
+                                opacity: 0.6,
+                                pointerEvents: "auto",
+                                cursor: "pointer",
+                                transition: "opacity 0.3s ease",
+                                zIndex: 1
+                            }}
+                            onMouseEnter={(e) => e.currentTarget.style.opacity = "1"}
+                            onMouseLeave={(e) => e.currentTarget.style.opacity = "0.6"}
+                        >
+                            {placeholders[placeholderIndex]}
+                        </div>
+                    )}
+                </div>
 
-                <div style={{ marginTop: "16px" }}>
+                <div style={{ marginTop: "16px", position: "relative" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
                         <span style={{ color: "var(--text-muted)", fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>// The Source</span>
                     </div>
-                    <input
-                        className="glass-input"
-                        type="text"
-                        style={{ padding: "10px 16px" }}
-                        placeholder='Who is the source of this fog? (e.g., "My Boss," "McKinsey," "Google," etc.)'
-                        value={source}
-                        onChange={(e) => setSource(e.target.value)}
-                    />
+                    
+                    <div style={{ position: "relative" }}>
+                        <span style={{ 
+                            position: "absolute", 
+                            left: "16px", 
+                            top: "50%", 
+                            transform: "translateY(-50%)", 
+                            color: "var(--electric-blue)", 
+                            fontWeight: "bold",
+                            pointerEvents: "none",
+                            zIndex: 3
+                        }}>#</span>
+                        <input
+                            className="glass-input"
+                            type="text"
+                            style={{ padding: "10px 16px 10px 32px", position: "relative", zIndex: 2, background: "rgba(255, 255, 255, 0.02)" }}
+                            placeholder='Search or define the source (e.g., BigTech)'
+                            value={source.replace('#', '')}
+                            onChange={(e) => setSource(e.target.value)}
+                            onFocus={() => setIsSourceFocused(true)}
+                            onBlur={() => setTimeout(() => setIsSourceFocused(false), 200)} // Delay to allow click
+                        />
+                    </div>
+                    
+                    {isSourceFocused && (
+                        <div style={{
+                            position: "absolute",
+                            top: "100%",
+                            left: 0,
+                            right: 0,
+                            marginTop: "8px",
+                            background: "var(--obsidian)",
+                            border: "1px solid var(--electric-blue)",
+                            borderRadius: "8px",
+                            padding: "8px",
+                            display: "flex",
+                            flexWrap: "wrap",
+                            gap: "8px",
+                            boxShadow: "0 8px 24px rgba(0,0,0,0.8)",
+                            zIndex: 20,
+                            maxHeight: "150px",
+                            overflowY: "auto"
+                        }}>
+                            {filteredTags.length > 0 ? (
+                                filteredTags.map(tag => (
+                                    <button
+                                        key={tag}
+                                        onClick={() => {
+                                            setSource(`#${tag}`);
+                                            setIsSourceFocused(false);
+                                        }}
+                                        style={{
+                                            background: source === `#${tag}` ? "var(--electric-blue)" : "rgba(0, 123, 255, 0.1)",
+                                            color: source === `#${tag}` ? "var(--signal-white)" : "var(--electric-blue)",
+                                            border: "1px solid var(--electric-blue)",
+                                            padding: "4px 12px",
+                                            borderRadius: "16px",
+                                            fontSize: "0.75rem",
+                                            cursor: "pointer",
+                                            transition: "all 0.2s ease"
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            if (source !== `#${tag}`) {
+                                                e.currentTarget.style.background = "rgba(0, 123, 255, 0.2)";
+                                            }
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            if (source !== `#${tag}`) {
+                                                e.currentTarget.style.background = "rgba(0, 123, 255, 0.1)";
+                                            }
+                                        }}
+                                    >
+                                        #{tag}
+                                    </button>
+                                ))
+                            ) : (
+                                <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", padding: "4px 8px" }}>
+                                    Press enter to create custom tag: #{source.replace('#', '')}
+                                </span>
+                            )}
+                        </div>
+                    )}
+                    
                     <div style={{ marginTop: "6px", fontSize: "0.65rem", color: "var(--text-muted)", fontStyle: "italic" }}>
-                        Identify the source to help track the Global B.S. Index.
+                        Identify the source to help track the Global B.S. Index. Try clicking the input to see common tags.
                     </div>
                 </div>
             </div>
