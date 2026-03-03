@@ -130,7 +130,7 @@ export default function ThreadPage() {
     const handleCopyShareUrl = () => {
         const url = `${window.location.origin}/thread/${id}`;
         navigator.clipboard.writeText(url);
-        alert("Thread link copied to clipboard!");
+        addToast("Thread link copied to clipboard!", "info");
     };
 
     const handleAddComment = async (e: React.FormEvent, parentId: string | null = null, textOverride: string | null = null) => {
