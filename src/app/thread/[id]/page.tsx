@@ -21,6 +21,32 @@ export default function ThreadPage() {
     const [submitting, setSubmitting] = useState(false);
     const { addToast } = useToast();
 
+    // Helper: Generate a consistent anonymous name for the current user in this thread.
+    // In a real app we'd use a session ID or Firebase Auth UID. For demo, we'll store a pseudo-ID in localStorage.
+    const getAnonymousName = () => {
+        const localIdKey = `ungloss_anon_id_${id}`;
+        let myAnonId = localStorage.getItem(localIdKey);
+        
+        if (!myAnonId) {
+            // Count unique authors currently in the thread to generate the next number
+            const uniqueAuthors = new Set(comments.map(c => c.authorName));
+            const nextNumber = uniqueAuthors.size + 1;
+            
+            // Pool of corporate-themed funny names
+            const prefixes = ["Synergistic", "Pivot", "Bandwidth", "Agile", "Holistic", "Circling", "Frictionless"];
+            const nouns = ["Zombie", "Ninja", "Guru", "Rockstar", "Unicorn", "Synergy", "Paradigm"];
+            
+            // We use simple math to deterministically pick a name combo if we want, or random.
+            // Random is fine since we save it to localStorage for this specific thread.
+            const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+            const noun = nouns[Math.floor(Math.random() * nouns.length)];
+            
+            myAnonId = `${prefix} ${noun} ${nextNumber}`;
+            localStorage.setItem(localIdKey, myAnonId);
+        }
+        return myAnonId;
+    };
+
     // Helper function to build a tree from the flat array of comments
     const buildCommentTree = (flatComments: any[]) => {
         const commentMap: any = {};
@@ -31,11 +57,13 @@ export default function ThreadPage() {
         });
 
         flatComments.forEach(c => {
+            // Firestore might return undefined instead of null if we don't save the field.
+            // Or it might be an empty string. We treat all falsy values as root.
             if (c.parentId) {
                 if (commentMap[c.parentId]) {
                     commentMap[c.parentId].children.push(commentMap[c.id]);
                 } else {
-                    roots.push(commentMap[c.id]); // Parent is missing, treat as root
+                    roots.push(commentMap[c.id]); // Parent was deleted or is missing, treat as root
                 }
             } else {
                 roots.push(commentMap[c.id]);
@@ -105,8 +133,8 @@ export default function ThreadPage() {
         try {
             await addDoc(collection(db, "comments"), {
                 translationId: id,
-                parentId: parentId || null, // Ensure explicit null if not replying
-                authorName: "Demo User", // Hardcoded per requirements for Phase 4
+                parentId: parentId || "", // Use empty string instead of null for easier Firestore querying/indexing later
+                authorName: getAnonymousName(),
                 text: textToSubmit.trim(),
                 timestamp: serverTimestamp()
             });
@@ -207,7 +235,7 @@ export default function ThreadPage() {
                         <div className="glass-panel" style={{ padding: "16px" }}>
                             <form onSubmit={handleAddComment} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                                 <div style={{ fontSize: "0.85rem", color: "var(--signal-white)" }}>
-                                    Commenting as <span style={{ color: "var(--electric-blue)", fontWeight: "bold" }}>Demo User</span>
+                                    Commenting anonymously
                                 </div>
                                 <textarea
                                     className="glass-input"
