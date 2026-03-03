@@ -37,37 +37,35 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <div className="container">
-          <header className="header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 24px", borderBottom: "1px solid var(--glass-border)" }}>
-            <Link href="/" className="logo" style={{ textDecoration: "none" }}>
-              <span className="logo-mark">U/</span>
-              Un<span>gloss</span>
-            </Link>
-            <nav style={{ display: "flex", gap: "24px", alignItems: "center", fontSize: "0.9rem", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-              <Link href="/" className="nav-link">Home</Link>
-              <Link href="/global-index" className="nav-link" style={{ color: "var(--warning-orange)" }}>Global Index</Link>
-              <Link href="/blog" className="nav-link">Blog</Link>
-              <Link href="/preferences" className="nav-link">Preferences</Link>
-            </nav>
-          </header>
-          <ToastProvider>
+        <ToastProvider>
+          <div className="container">
+            <header className="header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 24px", borderBottom: "1px solid var(--glass-border)" }}>
+              <Link href="/" className="logo" style={{ textDecoration: "none" }}>
+                <span className="logo-mark">U/</span>
+                Un<span>gloss</span>
+              </Link>
+              <nav style={{ display: "flex", gap: "24px", alignItems: "center", fontSize: "0.9rem", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                <Link href="/" className="nav-link">Home</Link>
+                <Link href="/global-index" className="nav-link" style={{ color: "var(--warning-orange)" }}>Global Index</Link>
+                <Link href="/blog" className="nav-link">Blog</Link>
+                <Link href="/preferences" className="nav-link">Preferences</Link>
+              </nav>
+            </header>
             <AuthProvider>
               {children}
             </AuthProvider>
-          </ToastProvider>
-          <footer style={{ borderTop: "1px solid var(--glass-border)", padding: "32px 24px", marginTop: "40px", textAlign: "center", fontSize: "0.85rem", color: "var(--text-muted)", display: "flex", justifyContent: "center", gap: "32px", textTransform: "uppercase", letterSpacing: "0.05em", flexWrap: "wrap" }}>
-            <Link href="/about" className="nav-link">About Us</Link>
-            <Link href="/privacy" className="nav-link">Privacy Policy</Link>
-            <Link href="/terms" className="nav-link">Terms of Service</Link>
-          </footer>
-        </div>
-        {process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID && (
-          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID} />
-        )}
-        <SpeedInsights />
-        <Analytics />
-        <ToastProvider>
-           <ToastContainer />
+            <footer style={{ borderTop: "1px solid var(--glass-border)", padding: "32px 24px", marginTop: "40px", textAlign: "center", fontSize: "0.85rem", color: "var(--text-muted)", display: "flex", justifyContent: "center", gap: "32px", textTransform: "uppercase", letterSpacing: "0.05em", flexWrap: "wrap" }}>
+              <Link href="/about" className="nav-link">About Us</Link>
+              <Link href="/privacy" className="nav-link">Privacy Policy</Link>
+              <Link href="/terms" className="nav-link">Terms of Service</Link>
+            </footer>
+          </div>
+          {process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID && (
+            <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID} />
+          )}
+          <SpeedInsights />
+          <Analytics />
+          <ToastContainer />
         </ToastProvider>
       </body>
     </html>
