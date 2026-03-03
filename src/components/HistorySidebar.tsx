@@ -2,8 +2,6 @@
 
 import { useEffect, useState, FormEvent } from "react";
 import { FaHistory, FaEnvelope } from "react-icons/fa";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { db } from "@/lib/firebase";
 import { useToast } from "@/context/ToastContext";
 
 interface HistoryItem {
@@ -40,13 +38,15 @@ export default function HistorySidebar() {
 
     return (
         <div style={{ display: "flex", flexDirection: "column", gap: "24px", height: "100%" }}>
+            {/* Archive Content... */}
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                 <FaHistory style={{ color: "var(--warning-orange)", fontSize: "1.1rem" }} />
                 <h2 style={{ fontSize: "1.1rem", fontWeight: "bold", color: "var(--signal-white)", letterSpacing: "0.05em", textTransform: "uppercase" }}>
                     Your Archive
                 </h2>
             </div>
-
+            {/* ... other code remains the same ... */}
+            
             <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                 <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: "bold", letterSpacing: "0.1em" }}>
                     RECENT SESSIONS
@@ -122,18 +122,39 @@ export default function HistorySidebar() {
                         e.preventDefault();
                         const form = e.currentTarget;
                         const input = form.elements.namedItem("email") as HTMLInputElement;
+                        const button = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+                        
                         if (!input.value) return;
+                        
+                        const originalButtonText = button.innerText;
+                        button.innerText = "SUBSCRIBING...";
+                        button.disabled = true;
+
                         try {
-                            await addDoc(collection(db, "newsletter_subs"), {
-                                email: input.value,
-                                source: "sidebar_widget",
-                                timestamp: serverTimestamp()
+                            const res = await fetch('/api/subscribe', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ email: input.value })
                             });
-                            input.value = "";
-                            addToast("Successfully subscribed to the Jargon Buster.", "success");
+                            
+                            const data = await res.json();
+                            
+                            if (res.ok) {
+                                input.value = "";
+                                if (data.isDuplicate) {
+                                    addToast("You're already subscribed! Check your inbox.", "info");
+                                } else {
+                                    addToast("Successfully subscribed to the Jargon Buster.", "success");
+                                }
+                            } else {
+                                throw new Error(data.error || 'Failed to subscribe');
+                            }
                         } catch (err) {
                             console.error(err);
                             addToast("Failed to subscribe. Please try again.", "error");
+                        } finally {
+                            button.innerText = originalButtonText;
+                            button.disabled = false;
                         }
                     }} 
                     style={{ display: "flex", flexDirection: "column", gap: "8px" }}

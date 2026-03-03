@@ -2,8 +2,6 @@
 
 import TrustPageTemplate, { TrustSection } from "@/components/TrustPageTemplate";
 import { useState } from "react";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { db } from "@/lib/firebase";
 import { useToast } from "@/context/ToastContext";
 
 const aboutSections: TrustSection[] = [
@@ -38,14 +36,25 @@ export default function AboutPage() {
 
         setStatus("submitting");
         try {
-            await addDoc(collection(db, "newsletter_subs"), {
-                email,
-                source: "manifesto",
-                timestamp: serverTimestamp()
+            const res = await fetch('/api/subscribe', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
             });
-            setStatus("success");
-            setEmail("");
-            addToast("Your signature has been recorded. Welcome to the resistance.", "success");
+            
+            const data = await res.json();
+            
+            if (res.ok) {
+                setStatus("success");
+                setEmail("");
+                if (data.isDuplicate) {
+                    addToast("You're already subscribed! Check your inbox.", "info");
+                } else {
+                    addToast("Your signature has been recorded. Welcome to the resistance.", "success");
+                }
+            } else {
+                throw new Error(data.error || 'Failed to subscribe');
+            }
         } catch (error) {
             console.error("Error subscribing:", error);
             setStatus("error");
