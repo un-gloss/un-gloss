@@ -79,8 +79,8 @@ export default function StatsBar() {
                 else if (data.mode === 'pivot') p++;
                 else if (data.mode === 'hallucinate') h++;
 
-                tw += (data.wastedCapital || 0);
-                ms += (data.moneySaved || 0);
+                tw += parseFloat(`${data.wastedCapital || 0}`);
+                ms += parseFloat(`${data.moneySaved || 0}`);
             });
 
             setStats({
