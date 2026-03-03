@@ -103,8 +103,7 @@ export default function ThreadPage() {
 
         const q = query(
             collection(db, "comments"),
-            where("translationId", "==", id),
-            orderBy("timestamp", "asc")
+            where("translationId", "==", id)
         );
 
         const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -112,7 +111,17 @@ export default function ThreadPage() {
                 id: doc.id,
                 ...doc.data()
             }));
+            
+            // Sort client-side to avoid backend requirement for a Firebase composite index
+            fetchedComments.sort((a: any, b: any) => {
+                const timeA = a.timestamp?.seconds || Number.MAX_SAFE_INTEGER;
+                const timeB = b.timestamp?.seconds || Number.MAX_SAFE_INTEGER;
+                return timeA - timeB; // Ascending order
+            });
+            
             setComments(fetchedComments);
+        }, (error) => {
+            console.error("Firestore comments listener error:", error);
         });
 
         return () => unsubscribe();
