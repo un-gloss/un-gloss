@@ -6,6 +6,8 @@ import { db } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 import { FaHeart, FaCommentAlt, FaShare } from "react-icons/fa";
 import { useToast } from "@/context/ToastContext";
+import Link from "next/link";
+import { getAllTerms } from "@/lib/dictionary";
 
 // Temporary mock data until Firebase is fully connected by the user
 const MOCK_FEED = [
@@ -37,6 +39,43 @@ export interface FeedFilter {
     operator: "==";
     value: string;
 }
+
+// SEO Smart Linking: Scans text for dictionary terms and wraps them in Links
+const RichTextRenderer = ({ text }: { text: string }) => {
+    const terms = getAllTerms();
+    
+    // Create a safe, escaped regex pattern of all terms, sorted by length descending so longer phrases match first
+    const sortedTerms = [...terms].sort((a, b) => b.term.length - a.term.length);
+    const escapedTerms = sortedTerms.map(t => t.term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+    const pattern = new RegExp(`\\b(${escapedTerms.join('|')})\\b`, 'gi');
+
+    const parts = text.split(pattern);
+
+    return (
+        <p style={{ fontSize: "1rem", lineHeight: "1.5" }} className="human-text">
+            {parts.map((part, i) => {
+                const lowerPart = part.toLowerCase();
+                const matchedTerm = terms.find(t => t.term.toLowerCase() === lowerPart);
+                
+                if (matchedTerm) {
+                    return (
+                        <Link 
+                            key={i} 
+                            href={`/meaning/${matchedTerm.slug}`}
+                            onClick={(e) => e.stopPropagation()} // Prevent clicking the card behind the link
+                            style={{ color: "var(--electric-blue)", textDecoration: "none", fontWeight: "bold", borderBottom: "1px dashed var(--electric-blue)" }}
+                            onMouseOver={(e) => e.currentTarget.style.color = "var(--warning-orange)"}
+                            onMouseOut={(e) => e.currentTarget.style.color = "var(--electric-blue)"}
+                        >
+                            {part}
+                        </Link>
+                    );
+                }
+                return <span key={i}>{part}</span>;
+            })}
+        </p>
+    );
+};
 
 export default function CommunityFeed({ filter, titleOverride }: { filter?: FeedFilter, titleOverride?: string }) {
     const [feed, setFeed] = useState<any[]>([]);
@@ -143,9 +182,7 @@ export default function CommunityFeed({ filter, titleOverride }: { filter?: Feed
                             <p style={{ fontSize: "0.9rem", color: "var(--text-muted)", fontFamily: "'Roboto Mono', monospace", marginBottom: "8px", fontStyle: "italic", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
                                 "{item.originalText}"
                             </p>
-                            <p className={item.mode === 'hallucinate' ? "corporate-text" : "human-text"} style={{ fontSize: "1rem" }}>
-                                {item.translation}
-                            </p>
+                            <RichTextRenderer text={item.translation} />
                         </div>
                         
                         {/* Inline Actions */}
