@@ -7,6 +7,8 @@ import '@fontsource/roboto-mono/400.css';
 import "./globals.css";
 import { GoogleAnalytics } from '@next/third-parties/google';
 import { AuthProvider } from "@/context/AuthContext";
+import { ToastProvider } from "@/context/ToastContext";
+import ToastContainer from "@/components/ToastContainer";
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from '@vercel/analytics/react';
 import Link from 'next/link';
@@ -38,9 +40,11 @@ export default function RootLayout({
               <Link href="/preferences" className="nav-link">Preferences</Link>
             </nav>
           </header>
-          <AuthProvider>
-            {children}
-          </AuthProvider>
+          <ToastProvider>
+            <AuthProvider>
+              {children}
+            </AuthProvider>
+          </ToastProvider>
           <footer style={{ borderTop: "1px solid var(--glass-border)", padding: "32px 24px", marginTop: "40px", textAlign: "center", fontSize: "0.85rem", color: "var(--text-muted)", display: "flex", justifyContent: "center", gap: "32px", textTransform: "uppercase", letterSpacing: "0.05em", flexWrap: "wrap" }}>
             <Link href="/about" className="nav-link">About Us</Link>
             <Link href="/privacy" className="nav-link">Privacy Policy</Link>
@@ -52,6 +56,9 @@ export default function RootLayout({
         )}
         <SpeedInsights />
         <Analytics />
+        <ToastProvider>
+           <ToastContainer />
+        </ToastProvider>
       </body>
     </html>
   );

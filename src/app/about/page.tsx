@@ -4,6 +4,7 @@ import TrustPageTemplate, { TrustSection } from "@/components/TrustPageTemplate"
 import { useState } from "react";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { useToast } from "@/context/ToastContext";
 
 const aboutSections: TrustSection[] = [
     {
@@ -29,6 +30,7 @@ function HoverReveal({ jargon, ungloss }: { jargon: string, ungloss: string }) {
 export default function AboutPage() {
     const [email, setEmail] = useState("");
     const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+    const { addToast } = useToast();
 
     const handleSubscribe = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -43,9 +45,11 @@ export default function AboutPage() {
             });
             setStatus("success");
             setEmail("");
+            addToast("Your signature has been recorded. Welcome to the resistance.", "success");
         } catch (error) {
             console.error("Error subscribing:", error);
             setStatus("error");
+            addToast("Failed to record signature. Systems are down.", "error");
         }
     };
 

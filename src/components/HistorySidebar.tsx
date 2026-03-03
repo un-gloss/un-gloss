@@ -4,6 +4,7 @@ import { useEffect, useState, FormEvent } from "react";
 import { FaHistory, FaEnvelope } from "react-icons/fa";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { useToast } from "@/context/ToastContext";
 
 interface HistoryItem {
     id: string;
@@ -35,6 +36,7 @@ const MOCK_HISTORY: HistoryItem[] = [
 
 export default function HistorySidebar() {
     const [history, setHistory] = useState<HistoryItem[]>(MOCK_HISTORY);
+    const { addToast } = useToast();
 
     return (
         <div style={{ display: "flex", flexDirection: "column", gap: "24px", height: "100%" }}>
@@ -128,10 +130,10 @@ export default function HistorySidebar() {
                                 timestamp: serverTimestamp()
                             });
                             input.value = "";
-                            alert("Subscribed successfully!");
+                            addToast("Successfully subscribed to the Jargon Buster.", "success");
                         } catch (err) {
                             console.error(err);
-                            alert("Failed to subscribe.");
+                            addToast("Failed to subscribe. Please try again.", "error");
                         }
                     }} 
                     style={{ display: "flex", flexDirection: "column", gap: "8px" }}
