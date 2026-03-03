@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { collection, query, orderBy, limit, onSnapshot, where, doc, updateDoc, increment } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
-import { FaHeart, FaCommentAlt, FaShare } from "react-icons/fa";
+import { FaBullhorn, FaCommentAlt, FaShare } from "react-icons/fa";
 import { useToast } from "@/context/ToastContext";
 import Link from "next/link";
 import { getAllTerms } from "@/lib/dictionary";
@@ -189,8 +189,8 @@ export default function CommunityFeed({ filter, titleOverride }: { filter?: Feed
                         {/* Inline Actions */}
                         <div style={{ display: "flex", gap: "16px", marginTop: "4px", paddingTop: "12px", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
                             <button className="feed-action-btn" onClick={(e) => handleLike(e, item.id)}>
-                                <FaHeart color={(item.likes || 0) > 0 ? "var(--warning-orange)" : "currentColor"} /> 
-                                <span style={{fontSize: "0.8rem"}}>{item.likes || 0} Likes</span>
+                                <FaBullhorn color={(item.likes || 0) > 0 ? "var(--warning-orange)" : "currentColor"} /> 
+                                <span style={{fontSize: "0.8rem", fontWeight: "bold"}}>{item.likes || 0} I've Heard This</span>
                             </button>
                             <button className="feed-action-btn" onClick={(e) => { e.stopPropagation(); router.push(`/thread/${item.id}`); }}>
                                 <FaCommentAlt /> <span style={{fontSize: "0.8rem"}}>Discuss</span>

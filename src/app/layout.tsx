@@ -44,9 +44,10 @@ export default function RootLayout({
                 <span className="logo-mark">U/</span>
                 Un<span>gloss</span>
               </Link>
-              <nav style={{ display: "flex", gap: "24px", alignItems: "center", fontSize: "0.9rem", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+              <nav style={{ display: "flex", gap: "24px", alignItems: "center", fontSize: "0.9rem", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.05em", flexWrap: "wrap", justifyContent: "flex-end" }}>
                 <Link href="/" className="nav-link">Home</Link>
                 <Link href="/global-index" className="nav-link" style={{ color: "var(--warning-orange)" }}>Global Index</Link>
+                <Link href="/submit" className="nav-link" style={{ border: "1px solid var(--electric-blue)", color: "var(--electric-blue)", padding: "4px 12px", borderRadius: "16px" }}>Report Incident</Link>
                 <Link href="/blog" className="nav-link">Blog</Link>
                 <Link href="/preferences" className="nav-link">Preferences</Link>
               </nav>
