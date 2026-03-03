@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { collection, query, orderBy, limit, onSnapshot, where } from "firebase/firestore";
+import { collection, query, orderBy, limit, onSnapshot, where, doc, updateDoc, increment } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 import { FaHeart, FaCommentAlt, FaShare } from "react-icons/fa";
@@ -43,6 +43,20 @@ export default function CommunityFeed({ filter, titleOverride }: { filter?: Feed
     const [loading, setLoading] = useState(true);
     const router = useRouter();
     const { addToast } = useToast();
+
+    const handleLike = async (e: React.MouseEvent, id: string) => {
+        e.stopPropagation();
+        try {
+            const docRef = doc(db, "translations", id);
+            await updateDoc(docRef, {
+                likes: increment(1)
+            });
+            // We don't need a toast for every like to prevent spam, UI will update via onSnapshot
+        } catch (error) {
+            console.error("Error liking post:", error);
+            addToast("Failed to like post.", "error");
+        }
+    };
 
     useEffect(() => {
         let q = query(
@@ -136,8 +150,9 @@ export default function CommunityFeed({ filter, titleOverride }: { filter?: Feed
                         
                         {/* Inline Actions */}
                         <div style={{ display: "flex", gap: "16px", marginTop: "4px", paddingTop: "12px", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
-                            <button className="feed-action-btn" onClick={(e) => { e.stopPropagation(); /* Future: handle like */ }}>
-                                <FaHeart /> <span style={{fontSize: "0.8rem"}}>Like</span>
+                            <button className="feed-action-btn" onClick={(e) => handleLike(e, item.id)}>
+                                <FaHeart color={(item.likes || 0) > 0 ? "var(--warning-orange)" : "currentColor"} /> 
+                                <span style={{fontSize: "0.8rem"}}>{item.likes || 0} Likes</span>
                             </button>
                             <button className="feed-action-btn" onClick={(e) => { e.stopPropagation(); router.push(`/thread/${item.id}`); }}>
                                 <FaCommentAlt /> <span style={{fontSize: "0.8rem"}}>Discuss</span>

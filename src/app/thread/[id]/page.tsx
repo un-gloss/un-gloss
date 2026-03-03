@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { doc, getDoc, collection, query, where, orderBy, onSnapshot, addDoc, serverTimestamp } from "firebase/firestore";
+import { doc, getDoc, collection, query, where, orderBy, onSnapshot, addDoc, serverTimestamp, updateDoc, increment } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { FaArrowLeft, FaCommentAlt, FaShare } from "react-icons/fa";
+import { FaArrowLeft, FaCommentAlt, FaShare, FaHeart, FaReply } from "react-icons/fa";
 import Link from "next/link";
+import { useToast } from "@/context/ToastContext";
 import ThemeToggle from "@/components/ThemeToggle"; // Reusing the toggle for consistency
 
 export default function ThreadPage() {
@@ -18,6 +19,30 @@ export default function ThreadPage() {
     const [newComment, setNewComment] = useState("");
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
+    const { addToast } = useToast();
+
+    // Helper function to build a tree from the flat array of comments
+    const buildCommentTree = (flatComments: any[]) => {
+        const commentMap: any = {};
+        const roots: any[] = [];
+
+        flatComments.forEach(c => {
+            commentMap[c.id] = { ...c, children: [] };
+        });
+
+        flatComments.forEach(c => {
+            if (c.parentId) {
+                if (commentMap[c.parentId]) {
+                    commentMap[c.parentId].children.push(commentMap[c.id]);
+                } else {
+                    roots.push(commentMap[c.id]); // Parent is missing, treat as root
+                }
+            } else {
+                roots.push(commentMap[c.id]);
+            }
+        });
+        return roots;
+    };
 
     // Fetch the original translation post
     useEffect(() => {
@@ -71,24 +96,41 @@ export default function ThreadPage() {
         alert("Thread link copied to clipboard!");
     };
 
-    const handleAddComment = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!newComment.trim()) return;
+    const handleAddComment = async (e: React.FormEvent, parentId: string | null = null, textOverride: string | null = null) => {
+        if (e) e.preventDefault();
+        const textToSubmit = textOverride !== null ? textOverride : newComment;
+        if (!textToSubmit.trim()) return;
 
         setSubmitting(true);
         try {
             await addDoc(collection(db, "comments"), {
                 translationId: id,
+                parentId: parentId || null, // Ensure explicit null if not replying
                 authorName: "Demo User", // Hardcoded per requirements for Phase 4
-                text: newComment.trim(),
+                text: textToSubmit.trim(),
                 timestamp: serverTimestamp()
             });
-            setNewComment(""); // Clear input on success
+            if (!parentId) setNewComment(""); // Clear input on success
         } catch (error) {
             console.error("Error adding comment:", error);
-            alert("Failed to post comment.");
+            addToast("Failed to post comment. Ensure systems are online.", "error");
         } finally {
             setSubmitting(false);
+        }
+    };
+
+    const handleLike = async () => {
+        if (!translation) return;
+        try {
+            const docRef = doc(db, "translations", translation.id);
+            await updateDoc(docRef, {
+                likes: increment(1)
+            });
+            // Update local state for immediate feedback
+            setTranslation((prev: any) => ({ ...prev, likes: (prev.likes || 0) + 1 }));
+        } catch (error) {
+            console.error("Error liking post:", error);
+            addToast("Failed to like post.", "error");
         }
     };
 
@@ -123,7 +165,21 @@ export default function ThreadPage() {
                         </div>
 
                         {/* Thread Action Bar */}
-                        <div style={{ display: "flex", gap: "12px", borderTop: "1px solid var(--glass-border)", paddingTop: "16px", marginTop: "8px" }}>
+                        <div style={{ display: "flex", gap: "16px", borderTop: "1px solid var(--glass-border)", paddingTop: "16px", marginTop: "8px" }}>
+                            
+                            <button
+                                onClick={handleLike}
+                                style={{
+                                    background: "transparent", border: "none", color: "var(--text-muted)", fontSize: "0.85rem", fontWeight: "bold",
+                                    display: "flex", alignItems: "center", gap: "6px", cursor: "pointer", padding: "0", transition: "color 0.2s"
+                                }}
+                                onMouseOver={(e) => e.currentTarget.style.color = "var(--signal-white)"}
+                                onMouseOut={(e) => e.currentTarget.style.color = "var(--text-muted)"}
+                            >
+                                <FaHeart color={(translation.likes || 0) > 0 ? "var(--warning-orange)" : "currentColor"} /> 
+                                {translation.likes || 0} Likes
+                            </button>
+
                             <div style={{
                                 display: "flex", alignItems: "center", gap: "6px", color: "var(--text-muted)", fontSize: "0.85rem", fontWeight: "bold"
                             }}>
@@ -134,7 +190,7 @@ export default function ThreadPage() {
                                 onClick={handleCopyShareUrl}
                                 style={{
                                     background: "transparent", border: "none", color: "var(--text-muted)", fontSize: "0.85rem", fontWeight: "bold",
-                                    display: "flex", alignItems: "center", gap: "6px", cursor: "pointer", padding: "0"
+                                    display: "flex", alignItems: "center", gap: "6px", cursor: "pointer", padding: "0", transition: "color 0.2s"
                                 }}
                                 onMouseOver={(e) => e.currentTarget.style.color = "var(--signal-white)"}
                                 onMouseOut={(e) => e.currentTarget.style.color = "var(--text-muted)"}
@@ -181,20 +237,13 @@ export default function ThreadPage() {
                                     No comments yet. Be the first to decipher this fog.
                                 </div>
                             ) : (
-                                comments.map(comment => (
-                                    <div key={comment.id} className="glass-panel" style={{ padding: "16px", border: "none", background: "rgba(255,255,255,0.02)" }}>
-                                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
-                                            <span style={{ fontSize: "0.85rem", color: "var(--electric-blue)", fontWeight: "bold" }}>
-                                                {comment.authorName}
-                                            </span>
-                                            <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }} suppressHydrationWarning>
-                                                {comment.timestamp?.seconds ? new Date(comment.timestamp.seconds * 1000).toLocaleString() : 'Just now'}
-                                            </span>
-                                        </div>
-                                        <p style={{ color: "var(--signal-white)", fontSize: "0.95rem", whiteSpace: "pre-wrap", margin: 0 }}>
-                                            {comment.text}
-                                        </p>
-                                    </div>
+                                buildCommentTree(comments).map(comment => (
+                                    <CommentNode 
+                                        key={comment.id} 
+                                        comment={comment} 
+                                        onReply={(text, parentId) => handleAddComment(null as any, parentId, text)} 
+                                        submitting={submitting}
+                                    />
                                 ))
                             )}
                         </div>
@@ -202,6 +251,95 @@ export default function ThreadPage() {
                     </div>
                 </div>
             </main>
+        </div>
+    );
+}
+
+// Recursive Comment Component to handle Reddit-style threading
+function CommentNode({ comment, onReply, submitting }: { comment: any, onReply: (text: string, parentId: string) => void, submitting: boolean }) {
+    const [isReplying, setIsReplying] = useState(false);
+    const [replyText, setReplyText] = useState("");
+
+    const handleReplySubmit = () => {
+        if (!replyText.trim()) return;
+        onReply(replyText, comment.id);
+        setReplyText("");
+        setIsReplying(false);
+    };
+
+    return (
+        <div style={{ 
+            marginTop: comment.parentId ? "12px" : "0", 
+            paddingLeft: comment.parentId ? "16px" : "0", 
+            borderLeft: comment.parentId ? "2px solid rgba(255,255,255,0.05)" : "none",
+            display: "flex",
+            flexDirection: "column",
+            gap: "8px"
+        }}>
+            <div className="glass-panel" style={{ padding: "16px", border: "none", background: comment.parentId ? "rgba(255,255,255,0.01)" : "rgba(255,255,255,0.02)" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
+                    <span style={{ fontSize: "0.85rem", color: "var(--electric-blue)", fontWeight: "bold" }}>
+                        {comment.authorName}
+                    </span>
+                    <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }} suppressHydrationWarning>
+                        {comment.timestamp?.seconds ? new Date(comment.timestamp.seconds * 1000).toLocaleString() : 'Just now'}
+                    </span>
+                </div>
+                <p style={{ color: "var(--signal-white)", fontSize: "0.95rem", whiteSpace: "pre-wrap", margin: 0, marginBottom: "12px" }}>
+                    {comment.text}
+                </p>
+
+                {/* Reply Button */}
+                <button
+                    onClick={() => setIsReplying(!isReplying)}
+                    style={{
+                        background: "transparent", border: "none", color: "var(--text-muted)", fontSize: "0.75rem", fontWeight: "bold",
+                        display: "flex", alignItems: "center", gap: "6px", cursor: "pointer", padding: "0", transition: "color 0.2s"
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.color = "var(--warning-orange)"}
+                    onMouseOut={(e) => e.currentTarget.style.color = "var(--text-muted)"}
+                >
+                    <FaReply /> {isReplying ? "Cancel" : "Reply"}
+                </button>
+
+                {/* Inline Reply Form */}
+                {isReplying && (
+                    <div style={{ marginTop: "16px", display: "flex", flexDirection: "column", gap: "8px" }}>
+                        <textarea
+                            className="glass-input"
+                            rows={2}
+                            placeholder={`Replying to ${comment.authorName}...`}
+                            value={replyText}
+                            onChange={(e) => setReplyText(e.target.value)}
+                            style={{ fontSize: "0.85rem", padding: "12px" }}
+                        />
+                        <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px" }}>
+                            <button
+                                onClick={handleReplySubmit}
+                                className="action-button btn-ungloss"
+                                disabled={!replyText.trim() || submitting}
+                                style={{ padding: "6px 16px", fontSize: "0.75rem" }}
+                            >
+                                Submit
+                            </button>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            {/* Recursively Render Children */}
+            {comment.children && comment.children.length > 0 && (
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                    {comment.children.map((child: any) => (
+                        <CommentNode 
+                            key={child.id} 
+                            comment={child} 
+                            onReply={onReply} 
+                            submitting={submitting} 
+                        />
+                    ))}
+                </div>
+            )}
         </div>
     );
 }
