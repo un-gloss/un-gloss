@@ -37,28 +37,34 @@ export async function POST(req: Request) {
         // 3. Send the Welcome Email via Resend
         if (resend) {
             try {
-                const data = await resend.emails.send({
+                const { data, error } = await resend.emails.send({
                     from: `Un-gloss <${FROM_EMAIL}>`,
-                    to: email, // If not on a paid plan, resend limits sends to the verified domain owner's email only
+                    to: email, // Note: On free Resend tiers, domains must be verified to send outside permitted emails
                     subject: 'Welcome to Un-gloss: No More Synergies',
                     html: `
-                        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #0d1117; color: #f0f6fc;">
-                            <h1 style="color: #ff5722; text-transform: uppercase;">Welcome to Un-gloss</h1>
-                            <p style="font-size: 16px; line-height: 1.5; color: #c9d1d9;">
+                        <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; background-color: #ffffff; color: #000000;">
+                            <h1 style="font-size: 24px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 24px;">Welcome to Un-gloss</h1>
+                            <p style="font-size: 16px; line-height: 1.6; margin-bottom: 16px;">
                                 We are absolutely thrilled to have you onboard this synergistic journey. 
                                 <br/><br/>
                                 Just kidding.
                             </p>
-                            <p style="font-size: 16px; line-height: 1.5; color: #c9d1d9;">
+                            <p style="font-size: 16px; line-height: 1.6; margin-bottom: 32px;">
                                 Thanks for joining the resistance against corporate fog. We’ll send you the best (worst) corporate jargon breakdowns straight to your inbox.
                             </p>
-                            <p style="font-size: 14px; margin-top: 40px; color: #8b949e;">
+                            <hr style="border: none; border-top: 1px solid #e5e5e5; margin: 32px 0;" />
+                            <p style="font-size: 14px; color: #666666;">
                                 Stay un-glossed,<br/>
                                 <strong>The Un-gloss Team</strong>
                             </p>
                         </div>
                     `
                 });
+
+                if (error) {
+                    console.error('Error sending welcome email via Resend:', error);
+                    return NextResponse.json({ message: 'Subscription successful, but email delivery failed' }, { status: 200 });
+                }
                 
                 return NextResponse.json({ message: 'Subscription successful and email sent', data }, { status: 200 });
             } catch (emailError) {
