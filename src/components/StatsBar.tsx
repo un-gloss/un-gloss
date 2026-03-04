@@ -51,11 +51,11 @@ export default function StatsBar() {
     // Mock data for now until Firebase aggregation is implemented
     // Base mock data for visual impact, live data will aggregate on top of this
     const BASE_STATS = {
-        unglosses: 12482,
-        pivots: 8321,
-        hallucinations: 4502,
-        totalWasted: 1420500.50,
-        moneySaved: 685400.00
+        unglosses: 0,
+        pivots: 0,
+        hallucinations: 0,
+        totalWasted: 0,
+        moneySaved: 0
     };
 
     const [stats, setStats] = useState<Stats>(BASE_STATS);
