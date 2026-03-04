@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { getTermBySlug, getAllTerms, JargonTerm } from '@/lib/dictionary';
 import Link from 'next/link';
+import AutoLinkText from '@/components/AutoLinkText';
 
 type Props = {
     params: Promise<{ term: string }>;
@@ -17,6 +18,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const description = termData?.seoMetaDescription || termData?.theTruth || `Uncover the real meaning behind the corporate jargon "${displayTerm}". Plain speak for the modern workplace.`;
     const keywords = termData?.keywords || ["corporate jargon", "business translation", displayTerm];
 
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.un-gloss.com";
+    const ogImageUrl = termData ? `${baseUrl}/api/og?term=${termData.slug}` : `${baseUrl}/og-default.jpg`;
+    const ogImageAlt = termData ? `Translation of ${termData.term}: ${termData.theTruth}` : `${displayTerm} before and after translation`;
+
     return {
         title: title,
         description: description,
@@ -28,10 +33,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
             url: `https://www.un-gloss.com/meaning/${term}`,
             images: [
                 {
-                    url: 'https://www.un-gloss.com/og-default.jpg',
+                    url: ogImageUrl,
                     width: 1200,
                     height: 630,
-                    alt: `${displayTerm} before and after translation`,
+                    alt: ogImageAlt,
                 },
             ],
             siteName: 'Un-gloss',
@@ -40,6 +45,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
             card: 'summary_large_image',
             title: title,
             description: description,
+            images: [ogImageUrl],
         }
     };
 }
@@ -176,7 +182,7 @@ export default async function TermDefinitionPage({ params }: Props) {
                             // The Fog (Corporate Definition)
                         </h2>
                         <p style={{ fontSize: "1.2rem", color: "var(--text-muted)", fontFamily: "'Roboto Mono', monospace", fontStyle: "italic", lineHeight: "1.6" }}>
-                            "{termData.corporateDefinition}"
+                            "<AutoLinkText text={termData.corporateDefinition} />"
                         </p>
                     </div>
 
@@ -186,7 +192,7 @@ export default async function TermDefinitionPage({ params }: Props) {
                             // The Clarity (Un-glossed Reality)
                         </h2>
                         <p className="human-text" style={{ fontSize: "1.4rem", lineHeight: "1.5" }}>
-                            "{termData.theTruth}"
+                            "<AutoLinkText text={termData.theTruth} />"
                         </p>
                     </div>
 

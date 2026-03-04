@@ -3,6 +3,7 @@ import path from 'path';
 import matter from 'gray-matter';
 import { remark } from 'remark';
 import html from 'remark-html';
+import remarkJargon from './remark-jargon';
 
 const postsDirectory = path.join(process.cwd(), 'content', 'blog');
 
@@ -81,8 +82,9 @@ export async function getPostData(slug: string): Promise<BlogPostData | null> {
     // Use gray-matter to parse the post metadata section
     const matterResult = matter(fileContents);
 
-    // Use remark to convert markdown into HTML string
+    // Use remark to convert markdown into HTML string, passing it through our custom auto-linker first
     const processedContent = await remark()
+        .use(remarkJargon)
         .use(html)
         .process(matterResult.content);
     const contentHtml = processedContent.toString();
