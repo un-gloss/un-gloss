@@ -26,7 +26,7 @@ export default function SubmissionForm() {
     const [submitSuccess, setSubmitSuccess] = useState(false);
 
     const SOURCE_OPTIONS = [
-        "Tech", "Finance", "Consulting", "HR", "Education", "Government", "Retail", "Other"
+        "Tech", "Finance", "Consulting", "HR", "Education", "Government", "Retail", "Big4", "Accounting Firm", "Other"
     ];
 
     // The Validation Engine Check

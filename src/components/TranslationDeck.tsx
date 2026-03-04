@@ -26,7 +26,7 @@ export default function TranslationDeck() {
     const sourceTags = [
         "BigTech", "MiddleManagement", "Recruiting", "VentureCapital", 
         "Consulting", "Marketing", "Legal", "HumanResources", 
-        "ExecutiveSuite", "StartupFounder", "AgileCoach"
+        "ExecutiveSuite", "StartupFounder", "AgileCoach", "Big4", "AccountingFirm"
     ];
 
     const filteredTags = sourceTags.filter(tag => 
